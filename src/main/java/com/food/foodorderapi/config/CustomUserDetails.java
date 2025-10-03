@@ -2,6 +2,7 @@ package com.food.foodorderapi.config;
 
 
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,10 +16,7 @@ import org.springframework.stereotype.Component;
 import com.food.foodorderapi.entity.User;
 
 
-@Getter
-@Setter
-@NoArgsConstructor
-@Component
+@Data
 public class CustomUserDetails implements UserDetails {
 
     private User user;

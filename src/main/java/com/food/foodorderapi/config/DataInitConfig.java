@@ -1,6 +1,7 @@
 package com.food.foodorderapi.config;
 
 
+import com.food.foodorderapi.entity.Role;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
@@ -10,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.food.foodorderapi.repository.RoleRepository;
 import com.food.foodorderapi.repository.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -22,6 +26,13 @@ public class DataInitConfig {
     @PostConstruct
     @Transactional
     public void init() {
-
+        Role user = new Role() ;
+        user.setName("USER");
+        Role admin = new Role() ;
+        admin.setName("ADMIN");
+        List<Role> roles = new ArrayList<>();
+        roles.add(user);
+        roles.add(admin);
+        roleRepository.saveAll(roles);
     }
 }

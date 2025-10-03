@@ -1,15 +1,17 @@
 package com.food.foodorderapi.client.Gmail;
 
-import com.food.foodorderapi.library.utils.MailTemplateUtils.MailTemplates;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.apache.commons.validator.routines.EmailValidator;
+
+import com.food.foodorderapi.library.utils.MailTemplateUtils.MailTemplates;
 
 
 @Component

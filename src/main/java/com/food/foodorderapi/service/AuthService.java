@@ -4,7 +4,7 @@ import com.food.foodorderapi.dto.request.RefreshTokenRequestDto;
 import com.food.foodorderapi.dto.request.UserLoginRequestDto;
 import com.food.foodorderapi.dto.request.UserRegisterRequestDto;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
-import jakarta.mail.MessagingException;
+
 
 public interface AuthService {
 

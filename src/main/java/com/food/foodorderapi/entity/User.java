@@ -1,13 +1,13 @@
 package com.food.foodorderapi.entity;
 
 
-import com.food.foodorderapi.library.UserID.UserId;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.food.foodorderapi.library.UserID.UserId;
 
 @Data
 @Entity

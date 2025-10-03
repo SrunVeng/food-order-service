@@ -1,6 +1,8 @@
 package com.food.foodorderapi.mapper;
 
 
+import org.mapstruct.*;
+
 import com.food.foodorderapi.dto.request.RefreshTokenRequestDto;
 import com.food.foodorderapi.dto.request.UserLoginRequestDto;
 import com.food.foodorderapi.dto.request.UserRegisterRequestDto;
@@ -9,7 +11,6 @@ import com.food.foodorderapi.vo.request.RefreshTokenRequestVo;
 import com.food.foodorderapi.vo.request.UserLoginRequestVo;
 import com.food.foodorderapi.vo.request.UserRegisterRequestVo;
 import com.food.foodorderapi.vo.response.UserLoginResponseVo;
-import org.mapstruct.*;
 
 @Mapper(
     componentModel = "spring",

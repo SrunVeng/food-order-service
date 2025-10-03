@@ -1,6 +1,11 @@
 package com.food.foodorderapi.controller;
 
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.food.foodorderapi.dto.request.RefreshTokenRequestDto;
 import com.food.foodorderapi.dto.request.UserLoginRequestDto;
 import com.food.foodorderapi.dto.request.UserRegisterRequestDto;
@@ -12,10 +17,6 @@ import com.food.foodorderapi.vo.request.RefreshTokenRequestVo;
 import com.food.foodorderapi.vo.request.UserLoginRequestVo;
 import com.food.foodorderapi.vo.request.UserRegisterRequestVo;
 import com.food.foodorderapi.vo.response.UserLoginResponseVo;
-import jakarta.mail.MessagingException;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,5 +52,3 @@ public class AuthController {
     }
 
 }
-
-

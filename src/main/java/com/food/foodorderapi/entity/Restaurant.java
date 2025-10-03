@@ -18,6 +18,13 @@ public class Restaurant {
 
     private String locationLink;
 
+    //ToDo
+    private String ownerChatId;
+
+    private String ownerName;
+
+    private String ownerPhoneNumber;
+
     @ManyToMany(mappedBy = "restaurants")
     private List<Menu> menus;
 

@@ -212,6 +212,7 @@ public class AuthServiceImpl implements AuthService {
         passwordResetOTP.setEmail(userResetPasswordRequestDto.getEmail());
         passwordResetOTP.setCreatedAt(Instant.now());
         passwordResetOTP.setExpiresAt(Instant.now().plus(3, ChronoUnit.MINUTES));
+        passwordResetOTPRepository.save(passwordResetOTP);
         gmailResetClient.sendMsgForOTP(userResetPasswordRequestDto.getEmail(),OTP);
     }
 }

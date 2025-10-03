@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum ErrorCode {
 
 
-    USER_NAME_ALREADY_EXIST("ERR001", "Invalid service type.");
+    USER_NAME_ALREADY_EXIST("ERR001", "UserName Already Exist");
 
 
 

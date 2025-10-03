@@ -20,6 +20,9 @@ public class UserIdGenerator implements BeforeExecutionGenerator {
       EventType eventType) {
     User user = (User) owner;
 
+
+
+
     return null;
   }
 

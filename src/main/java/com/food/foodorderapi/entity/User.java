@@ -1,6 +1,7 @@
 package com.food.foodorderapi.entity;
 
 
+import com.food.foodorderapi.library.UserID.UserId;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,6 +17,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @UserId
+    private String userNo;
 
     private String username;
     private String password;

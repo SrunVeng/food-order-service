@@ -1,4 +1,4 @@
-package com.example.config;
+package com.food.foodorderapi.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

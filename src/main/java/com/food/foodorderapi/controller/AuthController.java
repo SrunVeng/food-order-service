@@ -12,6 +12,7 @@ import com.food.foodorderapi.vo.request.RefreshTokenRequestVo;
 import com.food.foodorderapi.vo.request.UserLoginRequestVo;
 import com.food.foodorderapi.vo.request.UserRegisterRequestVo;
 import com.food.foodorderapi.vo.response.UserLoginResponseVo;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +44,7 @@ public class AuthController {
     }
 
     @PostMapping("/user/register")
-    public ResponseMessageBuilder.ResponseMessage<Void> userRegister(@Valid @RequestBody UserRegisterRequestVo request) {
+    public ResponseMessageBuilder.ResponseMessage<Void> userRegister(@Valid @RequestBody UserRegisterRequestVo request) throws MessagingException {
         UserRegisterRequestDto requestDto = userMapper.toUserRegisterRequestDto(request);
         authService.userRegister(requestDto);
         return new ResponseMessageBuilder<Void>().success().build();

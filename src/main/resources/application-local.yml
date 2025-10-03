@@ -23,4 +23,18 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
+mail:
+  host: smtp.gmail.com
+  port: 587
+  username: yourgmail@gmail.com          # your full Gmail address
+  password: your_app_password_here       # 16-char app password (NOT your normal pw)
+  default-encoding: UTF-8
+  debug: false
+
+  properties:
+    mail:
+      smtp:
+        auth: true
+        starttls:
+          enable: true
 

@@ -4,6 +4,7 @@ import com.food.foodorderapi.dto.request.RefreshTokenRequestDto;
 import com.food.foodorderapi.dto.request.UserLoginRequestDto;
 import com.food.foodorderapi.dto.request.UserRegisterRequestDto;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
+import jakarta.mail.MessagingException;
 
 public interface AuthService {
 
@@ -12,6 +13,6 @@ public interface AuthService {
 
     UserLoginResultDto refreshToken(RefreshTokenRequestDto refreshTokenRequestDto);
 
-    void userRegister(UserRegisterRequestDto userRegisterRequestDto);
+    void userRegister(UserRegisterRequestDto userRegisterRequestDto) throws MessagingException;
 
 }

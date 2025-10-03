@@ -1,5 +1,6 @@
 package com.food.foodorderapi.service.Impl;
 
+import com.food.foodorderapi.client.Gmail.GmailClient;
 import com.food.foodorderapi.dto.request.RefreshTokenRequestDto;
 import com.food.foodorderapi.dto.request.UserLoginRequestDto;
 import com.food.foodorderapi.dto.request.UserRegisterRequestDto;
@@ -13,6 +14,7 @@ import com.food.foodorderapi.mapper.UserMapper;
 import com.food.foodorderapi.repository.RoleRepository;
 import com.food.foodorderapi.repository.UserRepository;
 import com.food.foodorderapi.service.AuthService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -29,7 +31,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import java.time.Duration;
 import java.time.Instant;
@@ -53,6 +55,7 @@ public class AuthServiceImpl implements AuthService {
     private final DaoAuthenticationProvider daoAuthenticationProvider;
     private final PasswordEncoder passwordEncoder;
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
+    private final GmailClient gmailClient;
 
 
     @Override
@@ -159,7 +162,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void userRegister(UserRegisterRequestDto userRegisterRequestDto) {
+    public void userRegister(UserRegisterRequestDto userRegisterRequestDto) throws MessagingException {
 
         User Byusername = userRepository.findByusername(userRegisterRequestDto.getUsername());
         if(ObjectUtils.isNotEmpty(Byusername)){
@@ -188,7 +191,7 @@ public class AuthServiceImpl implements AuthService {
         user.setIsAccountNonLocked(true);
         user.setIsCredentialsNonExpired(true);
         user.setIsDeleted(false);
-
         userRepository.save(user);
+        gmailClient.sendMsgForRegistered(user.getEmail());
     }
 }

@@ -162,7 +162,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void userRegister(UserRegisterRequestDto userRegisterRequestDto) throws MessagingException {
+    public void userRegister(UserRegisterRequestDto userRegisterRequestDto)  {
 
         User Byusername = userRepository.findByusername(userRegisterRequestDto.getUsername());
         if(ObjectUtils.isNotEmpty(Byusername)){
@@ -175,6 +175,8 @@ public class AuthServiceImpl implements AuthService {
         user.setEmail(userRegisterRequestDto.getEmail());
         user.setPassword(passwordEncoder.encode(userRegisterRequestDto.getPassword()));
         user.setPhoneNumber(userRegisterRequestDto.getPhoneNumber());
+        //ToDO
+        user.setChatId(null);
 
         // roles
         List<Role> roles = new ArrayList<>();

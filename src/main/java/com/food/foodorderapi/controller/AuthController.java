@@ -44,7 +44,7 @@ public class AuthController {
     }
 
     @PostMapping("/user/register")
-    public ResponseMessageBuilder.ResponseMessage<Void> userRegister(@Valid @RequestBody UserRegisterRequestVo request) throws MessagingException {
+    public ResponseMessageBuilder.ResponseMessage<Void> userRegister(@Valid @RequestBody UserRegisterRequestVo request)   {
         UserRegisterRequestDto requestDto = userMapper.toUserRegisterRequestDto(request);
         authService.userRegister(requestDto);
         return new ResponseMessageBuilder<Void>().success().build();

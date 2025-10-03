@@ -13,6 +13,6 @@ public interface AuthService {
 
     UserLoginResultDto refreshToken(RefreshTokenRequestDto refreshTokenRequestDto);
 
-    void userRegister(UserRegisterRequestDto userRegisterRequestDto) throws MessagingException;
+    void userRegister(UserRegisterRequestDto userRegisterRequestDto)  ;
 
 }

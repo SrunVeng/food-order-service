@@ -32,6 +32,7 @@ public class User {
 
     private String CreatedAt;
 
+    private String ChatId;
 
     // Security & lifecycle
     private Boolean isVerified = Boolean.FALSE;

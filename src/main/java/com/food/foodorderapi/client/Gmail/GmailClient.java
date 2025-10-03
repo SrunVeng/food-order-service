@@ -28,7 +28,7 @@ public class GmailClient {
     private static final String FROM = "No-Reply <no-reply@camcoffee.example>"; // “no reply” sender
 
 
-    public void sendMsgForRegistered(String to, String subject, String html) throws MessagingException {
+    private void sendMsgForRegistered(String to, String subject, String html) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
         helper.setTo(to);

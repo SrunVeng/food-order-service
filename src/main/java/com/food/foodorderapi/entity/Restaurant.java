@@ -8,15 +8,17 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name = "restaurant")
+@Table(name = "restaurants")
 public class Restaurant {
 
     @Id
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    private String name;
+
+    private String locationLink;
+
+    @ManyToMany(mappedBy = "restaurants")
     private List<Menu> menus;
-
-
 
 }

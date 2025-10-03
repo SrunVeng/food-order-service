@@ -173,8 +173,8 @@ public class AuthServiceImpl implements AuthService {
         user.setFirstName(userRegisterRequestDto.getFirstName());
         user.setLastName(userRegisterRequestDto.getLastName());
         user.setEmail(userRegisterRequestDto.getEmail());
-        user.setPassword(passwordEncoder.encode(userRegisterRequestDto.getPassword()));
         user.setPhoneNumber(userRegisterRequestDto.getPhoneNumber());
+        user.setPassword(passwordEncoder.encode(userRegisterRequestDto.getPassword()));
         //ToDO
         user.setChatId(null);
 

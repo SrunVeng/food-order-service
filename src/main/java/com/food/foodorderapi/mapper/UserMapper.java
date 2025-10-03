@@ -6,10 +6,12 @@ import org.mapstruct.*;
 import com.food.foodorderapi.dto.request.RefreshTokenRequestDto;
 import com.food.foodorderapi.dto.request.UserLoginRequestDto;
 import com.food.foodorderapi.dto.request.UserRegisterRequestDto;
+import com.food.foodorderapi.dto.request.UserResetPasswordRequestDto;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
 import com.food.foodorderapi.vo.request.RefreshTokenRequestVo;
 import com.food.foodorderapi.vo.request.UserLoginRequestVo;
 import com.food.foodorderapi.vo.request.UserRegisterRequestVo;
+import com.food.foodorderapi.vo.request.UserResetPasswordRequestVo;
 import com.food.foodorderapi.vo.response.UserLoginResponseVo;
 
 @Mapper(
@@ -25,5 +27,7 @@ public interface UserMapper {
     RefreshTokenRequestDto toRefreshTokenRequestDto(RefreshTokenRequestVo refreshTokenRequestVo);
 
     UserRegisterRequestDto toUserRegisterRequestDto(UserRegisterRequestVo requestVo);
+
+    UserResetPasswordRequestDto toUserResetPasswordRequestDto(UserResetPasswordRequestVo requestVo);
 
 }

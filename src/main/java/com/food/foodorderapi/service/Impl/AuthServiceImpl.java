@@ -1,5 +1,7 @@
 package com.food.foodorderapi.service.Impl;
 
+import com.food.foodorderapi.entity.PasswordResetOTP;
+import com.food.foodorderapi.repository.PasswordResetOTPRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,16 +27,19 @@ import org.springframework.security.oauth2.server.resource.authentication.Bearer
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.stereotype.Service;
 
-import com.food.foodorderapi.client.Gmail.GmailClient;
+import com.food.foodorderapi.client.Gmail.GmailRegisterClient;
+import com.food.foodorderapi.client.Gmail.GmailResetClient;
 import com.food.foodorderapi.dto.request.RefreshTokenRequestDto;
 import com.food.foodorderapi.dto.request.UserLoginRequestDto;
 import com.food.foodorderapi.dto.request.UserRegisterRequestDto;
+import com.food.foodorderapi.dto.request.UserResetPasswordRequestDto;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
 import com.food.foodorderapi.entity.Role;
 import com.food.foodorderapi.entity.User;
 import com.food.foodorderapi.library.constant.Constant;
 import com.food.foodorderapi.library.constant.ErrorCode;
 import com.food.foodorderapi.library.exception.BusinessException;
+import com.food.foodorderapi.library.utils.NumberGenerator.OTPGenerator;
 import com.food.foodorderapi.mapper.UserMapper;
 import com.food.foodorderapi.repository.RoleRepository;
 import com.food.foodorderapi.repository.UserRepository;
@@ -54,7 +59,9 @@ public class AuthServiceImpl implements AuthService {
     private final DaoAuthenticationProvider daoAuthenticationProvider;
     private final PasswordEncoder passwordEncoder;
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
-    private final GmailClient gmailClient;
+    private final GmailRegisterClient gmailRegisterClient;
+    private final GmailResetClient gmailResetClient;
+    private final PasswordResetOTPRepository passwordResetOTPRepository;
 
 
     @Override
@@ -194,6 +201,17 @@ public class AuthServiceImpl implements AuthService {
         user.setIsCredentialsNonExpired(true);
         user.setIsDeleted(false);
         userRepository.save(user);
-        gmailClient.sendMsgForRegistered(user.getEmail());
+        gmailRegisterClient.sendMsgForRegistered(user.getEmail());
+    }
+
+    @Override
+    public void userResetPassword(UserResetPasswordRequestDto userResetPasswordRequestDto) {
+        String OTP = OTPGenerator.generate6DigitOtp();
+        PasswordResetOTP passwordResetOTP = new PasswordResetOTP();
+        passwordResetOTP.setOtp(OTP);
+        passwordResetOTP.setEmail(userResetPasswordRequestDto.getEmail());
+        passwordResetOTP.setCreatedAt(Instant.now());
+        passwordResetOTP.setExpiresAt(Instant.now().plus(3, ChronoUnit.MINUTES));
+        gmailResetClient.sendMsgForOTP(userResetPasswordRequestDto.getEmail(),OTP);
     }
 }

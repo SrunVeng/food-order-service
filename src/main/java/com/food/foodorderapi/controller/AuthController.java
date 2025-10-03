@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.food.foodorderapi.dto.request.RefreshTokenRequestDto;
 import com.food.foodorderapi.dto.request.UserLoginRequestDto;
 import com.food.foodorderapi.dto.request.UserRegisterRequestDto;
+import com.food.foodorderapi.dto.request.UserResetPasswordRequestDto;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
 import com.food.foodorderapi.library.messagebuilder.ResponseMessageBuilder;
 import com.food.foodorderapi.mapper.UserMapper;
@@ -16,6 +17,7 @@ import com.food.foodorderapi.service.AuthService;
 import com.food.foodorderapi.vo.request.RefreshTokenRequestVo;
 import com.food.foodorderapi.vo.request.UserLoginRequestVo;
 import com.food.foodorderapi.vo.request.UserRegisterRequestVo;
+import com.food.foodorderapi.vo.request.UserResetPasswordRequestVo;
 import com.food.foodorderapi.vo.response.UserLoginResponseVo;
 
 @RestController
@@ -50,5 +52,13 @@ public class AuthController {
         authService.userRegister(requestDto);
         return new ResponseMessageBuilder<Void>().success().build();
     }
+
+    @PostMapping("/user/reset-password")
+    public ResponseMessageBuilder.ResponseMessage<Void> userResetPassword(@Valid @RequestBody UserResetPasswordRequestVo request)   {
+        UserResetPasswordRequestDto requestDto = userMapper.toUserResetPasswordRequestDto(request);
+        authService.userResetPassword(requestDto);
+        return new ResponseMessageBuilder<Void>().success().build();
+    }
+
 
 }

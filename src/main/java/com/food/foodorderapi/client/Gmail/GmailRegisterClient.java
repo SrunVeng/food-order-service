@@ -17,7 +17,7 @@ import com.food.foodorderapi.library.utils.MailTemplateUtils.MailTemplates;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class GmailClient {
+public class GmailRegisterClient {
 
     private final JavaMailSender mailSender;
 

@@ -26,8 +26,8 @@ logging:
 mail:
   host: smtp.gmail.com
   port: 587
-  username: yourgmail@gmail.com          # your full Gmail address
-  password: your_app_password_here       # 16-char app password (NOT your normal pw)
+  username: yourgmail@gmail.com
+  password: your_app_password_here
   default-encoding: UTF-8
   debug: false
 

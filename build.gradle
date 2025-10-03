@@ -76,6 +76,7 @@ dependencies {
     implementation 'commons-validator:commons-validator:1.10.0'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+
 }
 
 tasks.named('test') {

@@ -26,8 +26,8 @@ logging:
 mail:
   host: smtp.gmail.com
   port: 587
-  username: yourgmail@gmail.com
-  password: your_app_password_here
+  username: nhameyorder@gmail.com
+  password: cozzogfbudpmfnss
   default-encoding: UTF-8
   debug: false
 
@@ -38,3 +38,6 @@ mail:
         starttls:
           enable: true
 
+web:
+  portal:
+    url: "http://localhost:5173"

@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class UserRegisterRequestVo {
+public class UserRegisterVerifyRequestVo {
 
     @NotBlank(message = "first name cannot be blank")
     private String firstName;
@@ -26,4 +26,6 @@ public class UserRegisterRequestVo {
     @NotBlank(message = "email cannot be blank")
     @Email
     private String email;
+
+    private String otp;
 }

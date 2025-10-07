@@ -1,17 +1,12 @@
 package com.food.foodorderapi.mapper;
 
 
+
 import org.mapstruct.*;
 
-import com.food.foodorderapi.dto.request.RefreshTokenRequestDto;
-import com.food.foodorderapi.dto.request.UserLoginRequestDto;
-import com.food.foodorderapi.dto.request.UserRegisterRequestDto;
-import com.food.foodorderapi.dto.request.UserResetPasswordRequestDto;
+import com.food.foodorderapi.dto.request.*;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
-import com.food.foodorderapi.vo.request.RefreshTokenRequestVo;
-import com.food.foodorderapi.vo.request.UserLoginRequestVo;
-import com.food.foodorderapi.vo.request.UserRegisterRequestVo;
-import com.food.foodorderapi.vo.request.UserResetPasswordRequestVo;
+import com.food.foodorderapi.vo.request.*;
 import com.food.foodorderapi.vo.response.UserLoginResponseVo;
 
 @Mapper(
@@ -28,6 +23,9 @@ public interface UserMapper {
 
     UserRegisterRequestDto toUserRegisterRequestDto(UserRegisterRequestVo requestVo);
 
-    UserResetPasswordRequestDto toUserResetPasswordRequestDto(UserResetPasswordRequestVo requestVo);
+    UserRegisterVerifyRequestDto toUserRegisterVerifyRequestDto(UserRegisterVerifyRequestVo requestVo);
 
+    PerformPasswordResetRequestDto toPerformPassDto(PerformPasswordResetRequestVo requestVo);
+
+    UserResetPasswordRequestDto toUserResetPasswordRequestDto(UserResetPasswordRequestVo request);
 }

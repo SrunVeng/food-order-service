@@ -1,10 +1,8 @@
 package com.food.foodorderapi.service;
 
-import com.food.foodorderapi.dto.request.RefreshTokenRequestDto;
-import com.food.foodorderapi.dto.request.UserLoginRequestDto;
-import com.food.foodorderapi.dto.request.UserRegisterRequestDto;
-import com.food.foodorderapi.dto.request.UserResetPasswordRequestDto;
+import com.food.foodorderapi.dto.request.*;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
+
 
 
 public interface AuthService {
@@ -18,4 +16,7 @@ public interface AuthService {
 
     void userResetPassword(UserResetPasswordRequestDto userResetPasswordRequestDto);
 
+    void userRegisterVerify(UserRegisterVerifyRequestDto requestDto);
+
+    void performPasswordReset(PerformPasswordResetRequestDto performPassDto);
 }

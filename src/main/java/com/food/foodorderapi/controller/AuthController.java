@@ -6,18 +6,12 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.food.foodorderapi.dto.request.RefreshTokenRequestDto;
-import com.food.foodorderapi.dto.request.UserLoginRequestDto;
-import com.food.foodorderapi.dto.request.UserRegisterRequestDto;
-import com.food.foodorderapi.dto.request.UserResetPasswordRequestDto;
+import com.food.foodorderapi.dto.request.*;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
 import com.food.foodorderapi.library.messagebuilder.ResponseMessageBuilder;
 import com.food.foodorderapi.mapper.UserMapper;
 import com.food.foodorderapi.service.AuthService;
-import com.food.foodorderapi.vo.request.RefreshTokenRequestVo;
-import com.food.foodorderapi.vo.request.UserLoginRequestVo;
-import com.food.foodorderapi.vo.request.UserRegisterRequestVo;
-import com.food.foodorderapi.vo.request.UserResetPasswordRequestVo;
+import com.food.foodorderapi.vo.request.*;
 import com.food.foodorderapi.vo.response.UserLoginResponseVo;
 
 @RestController
@@ -53,10 +47,25 @@ public class AuthController {
         return new ResponseMessageBuilder<Void>().success().build();
     }
 
-    @PostMapping("/user/reset-password")
+    @PostMapping("/user/register/verify")
+    public ResponseMessageBuilder.ResponseMessage<Void> userRegisterVerify(@Valid @RequestBody UserRegisterVerifyRequestVo request)   {
+        UserRegisterVerifyRequestDto requestDto = userMapper.toUserRegisterVerifyRequestDto(request);
+        authService.userRegisterVerify(requestDto);
+        return new ResponseMessageBuilder<Void>().success().build();
+    }
+
+    @PostMapping("/user/reset-password/request")
     public ResponseMessageBuilder.ResponseMessage<Void> userResetPassword(@Valid @RequestBody UserResetPasswordRequestVo request)   {
         UserResetPasswordRequestDto requestDto = userMapper.toUserResetPasswordRequestDto(request);
         authService.userResetPassword(requestDto);
+        return new ResponseMessageBuilder<Void>().success().build();
+    }
+
+    @PostMapping("/user/reset-password/confirm")
+    public ResponseMessageBuilder.ResponseMessage<Void> confirmPasswordReset(
+            @Valid @RequestBody PerformPasswordResetRequestVo req) {
+        PerformPasswordResetRequestDto performPassDto = userMapper.toPerformPassDto(req);
+        authService.performPasswordReset(performPassDto);
         return new ResponseMessageBuilder<Void>().success().build();
     }
 

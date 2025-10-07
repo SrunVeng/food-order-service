@@ -30,3 +30,7 @@ mail:
         auth: true
         starttls:
           enable: true
+
+web:
+  portal:
+    url: "http://localhost:5173"

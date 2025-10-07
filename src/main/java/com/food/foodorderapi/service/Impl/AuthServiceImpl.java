@@ -1,5 +1,6 @@
 package com.food.foodorderapi.service.Impl;
 
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -7,11 +8,12 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -25,22 +27,21 @@ import org.springframework.security.oauth2.server.resource.authentication.Bearer
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.stereotype.Service;
 
-import com.food.foodorderapi.client.Gmail.GmailRegisterClient;
-import com.food.foodorderapi.client.Gmail.GmailResetClient;
-import com.food.foodorderapi.dto.request.RefreshTokenRequestDto;
-import com.food.foodorderapi.dto.request.UserLoginRequestDto;
-import com.food.foodorderapi.dto.request.UserRegisterRequestDto;
-import com.food.foodorderapi.dto.request.UserResetPasswordRequestDto;
+import com.food.foodorderapi.client.Gmail.GmailClient;
+import com.food.foodorderapi.dto.request.*;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
-import com.food.foodorderapi.entity.PasswordResetOTP;
+import com.food.foodorderapi.entity.EmailVerificationOTP;
+import com.food.foodorderapi.entity.PasswordResetToken;
 import com.food.foodorderapi.entity.Role;
 import com.food.foodorderapi.entity.User;
 import com.food.foodorderapi.library.constant.Constant;
 import com.food.foodorderapi.library.constant.ErrorCode;
 import com.food.foodorderapi.library.exception.BusinessException;
 import com.food.foodorderapi.library.utils.NumberGenerator.OTPGenerator;
+import com.food.foodorderapi.library.utils.NumberGenerator.TokenGenerator;
 import com.food.foodorderapi.mapper.UserMapper;
-import com.food.foodorderapi.repository.PasswordResetOTPRepository;
+import com.food.foodorderapi.repository.EmailVerificationOTPRepository;
+import com.food.foodorderapi.repository.PasswordResetTokenRepository;
 import com.food.foodorderapi.repository.RoleRepository;
 import com.food.foodorderapi.repository.UserRepository;
 import com.food.foodorderapi.service.AuthService;
@@ -59,9 +60,9 @@ public class AuthServiceImpl implements AuthService {
     private final DaoAuthenticationProvider daoAuthenticationProvider;
     private final PasswordEncoder passwordEncoder;
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
-    private final GmailRegisterClient gmailRegisterClient;
-    private final GmailResetClient gmailResetClient;
-    private final PasswordResetOTPRepository passwordResetOTPRepository;
+    private final GmailClient gmailClient;
+    private final EmailVerificationOTPRepository emailVerificationOTPRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
 
     @Override
@@ -170,52 +171,119 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void userRegister(UserRegisterRequestDto userRegisterRequestDto)  {
 
-        User Byusername = userRepository.findByusername(userRegisterRequestDto.getUsername());
-        if(ObjectUtils.isNotEmpty(Byusername)){
-            throw new BusinessException(ErrorCode.USER_NAME_ALREADY_EXIST.getCode(),ErrorCode.USER_NAME_ALREADY_EXIST.getMessage());
+        if (userRepository.existsByUsernameIgnoreCase(userRegisterRequestDto.getUsername())) {
+            throw new BusinessException(
+                    ErrorCode.USER_NAME_ALREADY_EXIST.getCode(),
+                    ErrorCode.USER_NAME_ALREADY_EXIST.getMessage()
+            );
+        }
+
+        if (userRepository.existsByEmailIgnoreCase(userRegisterRequestDto.getEmail())) {
+            throw new BusinessException(
+                    ErrorCode.EMAIL_ALREADY_EXIST.getCode(),
+                    ErrorCode.EMAIL_ALREADY_EXIST.getMessage()
+            );
         }
         if(!userRegisterRequestDto.getPassword().equals(userRegisterRequestDto.getConfirmPassword())){
             throw new BusinessException(ErrorCode.PASSWORD_MISMATCH.getCode(),ErrorCode.PASSWORD_MISMATCH.getMessage());
         }
 
+        emailVerificationOTPRepository.findOpenByEmailAndPurpose(userRegisterRequestDto.getEmail(), EmailVerificationOTP.Purpose.REGISTER)
+                .forEach(o -> {
+                    if (o.getExpiresAt().isBefore(Instant.now())) o.setStatus(EmailVerificationOTP.Status.EXPIRED);
+                });
+
+        String code = OTPGenerator.generate6DigitOtp(); // e.g. 000000–999999
+        EmailVerificationOTP rec = new EmailVerificationOTP();
+        rec.setEmail(userRegisterRequestDto.getEmail());
+        rec.setOtp(code);
+        rec.setPurpose(EmailVerificationOTP.Purpose.REGISTER);
+        rec.setStatus(EmailVerificationOTP.Status.OPEN);
+        rec.setCreatedAt(Instant.now());
+        rec.setExpiresAt(Instant.now().plus(Duration.ofMinutes(5)));
+        emailVerificationOTPRepository.save(rec);
+        gmailClient.sendOtpForRegister(userRegisterRequestDto.getEmail(),code);
+    }
+
+    @Override
+    public void userRegisterVerify(UserRegisterVerifyRequestDto requestDto) {
+        List<EmailVerificationOTP> list = emailVerificationOTPRepository.findOpenByEmailAndPurpose(requestDto.getEmail(), EmailVerificationOTP.Purpose.REGISTER);
+        if (list.isEmpty()) {
+            throw new BusinessException(ErrorCode.OTP_INVALID.getCode(), ErrorCode.OTP_INVALID.getMessage());
+        }
+        EmailVerificationOTP last = list.getFirst();
+
+        if (last.getExpiresAt().isBefore(Instant.now())) {
+            last.setStatus(EmailVerificationOTP.Status.EXPIRED);
+            throw new BusinessException(ErrorCode.OTP_EXPIRED.getCode(), ErrorCode.OTP_EXPIRED.getMessage());
+        }
+        if (!Objects.equals(last.getOtp(), requestDto.getOtp())) {
+            last.setAttempts(last.getAttempts() + 1);
+            throw new BusinessException(ErrorCode.OTP_INCORRECT.getCode(), ErrorCode.OTP_INCORRECT.getMessage());
+        }
+        last.setStatus(EmailVerificationOTP.Status.USED);
+
         User user = new User();
-        user.setFirstName(userRegisterRequestDto.getFirstName());
-        user.setLastName(userRegisterRequestDto.getLastName());
-        user.setUsername(userRegisterRequestDto.getUsername());
-        user.setEmail(userRegisterRequestDto.getEmail());
-        user.setPhoneNumber(userRegisterRequestDto.getPhoneNumber());
-        user.setPassword(passwordEncoder.encode(userRegisterRequestDto.getPassword()));
-        //ToDO
+        user.setFirstName(requestDto.getFirstName());
+        user.setLastName(requestDto.getLastName());
+        user.setUsername(requestDto.getUsername());
+        user.setEmail(requestDto.getEmail());
+        user.setPhoneNumber(requestDto.getPhoneNumber());
+        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         user.setChatId(null);
 
-        // roles
-        List<Role> roles = new ArrayList<>();
         Role role = roleRepository.findByName("USER");
-        roles.add(role);
-        user.setRoles(roles);
+        user.setRoles(Collections.singletonList(role));
 
-
-        //SYSTEM
-        user.setCreatedAt(String.valueOf(LocalDate.now()));
-        user.setIsVerified(false);
+        user.setCreatedAt(LocalDate.now().toString());
+        user.setIsVerified(true);
         user.setIsBlock(false);
         user.setIsAccountNonExpired(true);
         user.setIsAccountNonLocked(true);
         user.setIsCredentialsNonExpired(true);
         user.setIsDeleted(false);
         userRepository.save(user);
-        gmailRegisterClient.sendMsgForRegistered(user.getEmail());
+        gmailClient.sendConfirmationRegistered(user.getEmail());
     }
+
+
 
     @Override
     public void userResetPassword(UserResetPasswordRequestDto userResetPasswordRequestDto) {
-        String OTP = OTPGenerator.generate6DigitOtp();
-        PasswordResetOTP passwordResetOTP = new PasswordResetOTP();
-        passwordResetOTP.setOtp(OTP);
-        passwordResetOTP.setEmail(userResetPasswordRequestDto.getEmail());
-        passwordResetOTP.setCreatedAt(Instant.now());
-        passwordResetOTP.setExpiresAt(Instant.now().plus(3, ChronoUnit.MINUTES));
-        passwordResetOTPRepository.save(passwordResetOTP);
-        gmailResetClient.sendMsgForOTP(userResetPasswordRequestDto.getEmail(),OTP);
+
+        Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userResetPasswordRequestDto.getEmail());
+        if (userOpt.isEmpty()) {
+           throw new BusinessException(ErrorCode.EMAIL_DOES_NOT_EXIST.getCode(), ErrorCode.EMAIL_DOES_NOT_EXIST.getMessage());
+        }
+        User user = userOpt.get();
+        String token = TokenGenerator.generateToken();
+        Instant now = Instant.now();
+        PasswordResetToken presetToken = new PasswordResetToken();
+        presetToken.setToken(token);
+        presetToken.setCreatedAt(now);
+        presetToken.setExpiresAt(now.plus(Duration.ofMinutes(30)));
+        presetToken.setStatus(PasswordResetToken.Status.OPEN);
+        presetToken.setUser(user);
+        passwordResetTokenRepository.save(presetToken);
+        gmailClient.sendResetLink(user.getEmail(),presetToken.getToken());
+
+    }
+
+    @Override
+    public void performPasswordReset(PerformPasswordResetRequestDto performPassDto) {
+
+        PasswordResetToken prt = passwordResetTokenRepository.findByToken(performPassDto.getToken());
+        if (prt.getStatus() != PasswordResetToken.Status.OPEN || prt.getExpiresAt().isBefore(Instant.now())) {
+            prt.setStatus(PasswordResetToken.Status.EXPIRED);
+            passwordResetTokenRepository.save(prt);
+            throw new BusinessException(ErrorCode.INVALID_EXPIRED_RESET_LINK.getCode(), ErrorCode.INVALID_EXPIRED_RESET_LINK.getMessage());
+        }
+        User user = prt.getUser();
+        user.setPassword(passwordEncoder.encode(performPassDto.getNewPassword()));
+        userRepository.save(user);
+        prt.setStatus(PasswordResetToken.Status.USED);
+        prt.setUsedAt(Instant.now());
+        passwordResetTokenRepository.save(prt);
+
     }
 }

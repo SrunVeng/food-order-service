@@ -17,9 +17,9 @@ public class CronController {
 
     private final JobService jobService;
 
-    @DeleteMapping("/clean/otp")
-    public ResponseMessageBuilder.ResponseMessage<Void> cleanOtp() {
-        jobService.cleanOtp();
+    @DeleteMapping("/clean")
+    public ResponseMessageBuilder.ResponseMessage<Void> clean() {
+        jobService.clean();
         return new ResponseMessageBuilder<Void>().success().build();
     }
 

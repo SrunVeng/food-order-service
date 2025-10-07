@@ -1,7 +1,8 @@
 package com.food.foodorderapi.repository;
 
-import com.food.foodorderapi.entity.PasswordResetOTP;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.food.foodorderapi.entity.PasswordResetOTP;
 
 public interface PasswordResetOTPRepository extends JpaRepository<PasswordResetOTP,Long> {
 }

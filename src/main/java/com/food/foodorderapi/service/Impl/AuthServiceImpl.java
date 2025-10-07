@@ -1,7 +1,5 @@
 package com.food.foodorderapi.service.Impl;
 
-import com.food.foodorderapi.entity.PasswordResetOTP;
-import com.food.foodorderapi.repository.PasswordResetOTPRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +32,7 @@ import com.food.foodorderapi.dto.request.UserLoginRequestDto;
 import com.food.foodorderapi.dto.request.UserRegisterRequestDto;
 import com.food.foodorderapi.dto.request.UserResetPasswordRequestDto;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
+import com.food.foodorderapi.entity.PasswordResetOTP;
 import com.food.foodorderapi.entity.Role;
 import com.food.foodorderapi.entity.User;
 import com.food.foodorderapi.library.constant.Constant;
@@ -41,6 +40,7 @@ import com.food.foodorderapi.library.constant.ErrorCode;
 import com.food.foodorderapi.library.exception.BusinessException;
 import com.food.foodorderapi.library.utils.NumberGenerator.OTPGenerator;
 import com.food.foodorderapi.mapper.UserMapper;
+import com.food.foodorderapi.repository.PasswordResetOTPRepository;
 import com.food.foodorderapi.repository.RoleRepository;
 import com.food.foodorderapi.repository.UserRepository;
 import com.food.foodorderapi.service.AuthService;
@@ -173,6 +173,9 @@ public class AuthServiceImpl implements AuthService {
         User Byusername = userRepository.findByusername(userRegisterRequestDto.getUsername());
         if(ObjectUtils.isNotEmpty(Byusername)){
             throw new BusinessException(ErrorCode.USER_NAME_ALREADY_EXIST.getCode(),ErrorCode.USER_NAME_ALREADY_EXIST.getMessage());
+        }
+        if(!userRegisterRequestDto.getPassword().equals(userRegisterRequestDto.getConfirmPassword())){
+            throw new BusinessException(ErrorCode.PASSWORD_MISMATCH.getCode(),ErrorCode.PASSWORD_MISMATCH.getMessage());
         }
 
         User user = new User();

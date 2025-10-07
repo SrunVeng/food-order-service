@@ -6,8 +6,8 @@ import lombok.Getter;
 public enum ErrorCode {
 
 
-    USER_NAME_ALREADY_EXIST("ERR001", "UserName Already Exist");
-
+    USER_NAME_ALREADY_EXIST("ERR001", "Username Already Exist"),
+    PASSWORD_MISMATCH("ERR002", "Password Mismatch"),;
 
 
 

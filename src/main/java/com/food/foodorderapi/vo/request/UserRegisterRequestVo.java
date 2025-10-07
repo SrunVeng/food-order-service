@@ -15,6 +15,10 @@ public class UserRegisterRequestVo {
     private String username;
     @NotBlank(message = "password cannot be blank")
     private String password;
+
+    @NotBlank(message = "confirmPassword cannot be blank")
+    private String confirmPassword;
+
     @NotBlank(message = "phone number cannot be blank")
     private String phoneNumber;
 

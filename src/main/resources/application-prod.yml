@@ -19,8 +19,8 @@ spring:
 mail:
   host: smtp.gmail.com
   port: 587
-  username: yourgmail@gmail.com          # your full Gmail address
-  password: your_app_password_here       # 16-char app password (NOT your normal pw)
+  username: ${GMAIL_USERNAME:}
+  password: ${GMAIL_APPPASSWORD:}
   default-encoding: UTF-8
   debug: false
 
@@ -33,4 +33,4 @@ mail:
 
 web:
   portal:
-    url: "http://localhost:5173"
+    url: "https://food-order-wing.vercel.app"

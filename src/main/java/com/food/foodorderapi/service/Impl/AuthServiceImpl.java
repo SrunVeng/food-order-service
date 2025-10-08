@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,24 +31,17 @@ import org.springframework.stereotype.Service;
 
 import com.food.foodorderapi.client.Gmail.GmailClient;
 import com.food.foodorderapi.dto.request.*;
-import com.food.foodorderapi.dto.response.AdminCreateResultDto;
 import com.food.foodorderapi.dto.response.AdminResultDto;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
 import com.food.foodorderapi.dto.response.UserResultDto;
-import com.food.foodorderapi.entity.EmailVerificationOTP;
-import com.food.foodorderapi.entity.PasswordResetToken;
-import com.food.foodorderapi.entity.Role;
-import com.food.foodorderapi.entity.User;
+import com.food.foodorderapi.entity.*;
 import com.food.foodorderapi.library.constant.Constant;
 import com.food.foodorderapi.library.constant.ErrorCode;
 import com.food.foodorderapi.library.exception.BusinessException;
 import com.food.foodorderapi.library.utils.NumberGenerator.OTPGenerator;
 import com.food.foodorderapi.library.utils.NumberGenerator.TokenGenerator;
 import com.food.foodorderapi.mapper.UserMapper;
-import com.food.foodorderapi.repository.EmailVerificationOTPRepository;
-import com.food.foodorderapi.repository.PasswordResetTokenRepository;
-import com.food.foodorderapi.repository.RoleRepository;
-import com.food.foodorderapi.repository.UserRepository;
+import com.food.foodorderapi.repository.*;
 import com.food.foodorderapi.service.AuthService;
 
 
@@ -67,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
     private final GmailClient gmailClient;
     private final EmailVerificationOTPRepository emailVerificationOTPRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final AdminInviteTokenRepository adminInviteTokenRepository;
 
 
     @Override
@@ -292,8 +287,25 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AdminCreateResultDto createAdmin(AdminCreateRequestDto requestDto) {
-        return null;
+    public void createAdmin(AdminCreateRequestDto requestDto) {
+        User user = new User();
+        user.setFirstName(requestDto.getFirstName());
+        user.setLastName(requestDto.getLastName());
+        user.setEmail(requestDto.getEmail());
+        user.setPhoneNumber(requestDto.getPhoneNumber());
+        user.setPassword(null);
+        user.setChatId(null);
+        Role role = roleRepository.findByName("ADMIN");
+        user.setRoles(Collections.singletonList(role));
+        user.setCreatedAt(Instant.now());
+        user.setIsVerified(false);
+        user.setIsBlock(false);
+        user.setIsAccountNonExpired(true);
+        user.setIsAccountNonLocked(true);
+        user.setIsCredentialsNonExpired(true);
+        user.setIsDeleted(false);
+        userRepository.save(user);
+        gmailClient.sendAdminInvite(user.getEmail(),user.getUsername());
     }
 
     @Override
@@ -309,5 +321,18 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Page<AdminResultDto> findAllAdmin(Pageable pageable) {
         return userRepository.findAllAdmin(pageable).map(userMapper::toAdminResultDto);
+    }
+
+    @Override
+    public void adminSetPassword(AdminSetPasswordRequestDto request) {
+        AdminInviteToken byToken = adminInviteTokenRepository.findByToken(request.getToken());
+        if(ObjectUtils.isEmpty(byToken)) {
+            throw new BusinessException(ErrorCode.TOKEN_NOT_FOUND.getCode(), ErrorCode.TOKEN_NOT_FOUND.getMessage());
+        }
+        User user = byToken.getUser();
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setIsVerified(true);
+        userRepository.save(user);
+        byToken.setStatus(AdminInviteToken.Status.USED);
     }
 }

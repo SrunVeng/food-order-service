@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.food.foodorderapi.dto.request.AdminCreateRequestDto;
 import com.food.foodorderapi.dto.request.AdminDeleteRequestDto;
-import com.food.foodorderapi.dto.response.AdminCreateResultDto;
 import com.food.foodorderapi.dto.response.AdminResultDto;
 import com.food.foodorderapi.library.messagebuilder.PageResponse;
 import com.food.foodorderapi.library.messagebuilder.ResponseMessageBuilder;
@@ -22,7 +21,6 @@ import com.food.foodorderapi.mapper.UserMapper;
 import com.food.foodorderapi.service.AuthService;
 import com.food.foodorderapi.vo.request.AdminCreateRequestVo;
 import com.food.foodorderapi.vo.request.AdminDeleteRequestVo;
-import com.food.foodorderapi.vo.response.AdminCreateResponseVo;
 import com.food.foodorderapi.vo.response.AdminResponseVo;
 
 @RestController
@@ -36,11 +34,10 @@ public class SuperAdminController {
 
 
     @PostMapping("/create/user/admin")
-    public ResponseMessageBuilder.ResponseMessage<AdminCreateResponseVo> createAdmins(@Valid @RequestBody AdminCreateRequestVo request) {
+    public ResponseMessageBuilder.ResponseMessage<Void> createAdmins(@Valid @RequestBody AdminCreateRequestVo request) {
         AdminCreateRequestDto requestDto = userMapper.toAdminCreateRequestDto(request);
-        AdminCreateResultDto AdminCreateResultDto = authService.createAdmin(requestDto);
-        AdminCreateResponseVo response = userMapper.toAdminCreateResponseVo(AdminCreateResultDto);
-        return new ResponseMessageBuilder<AdminCreateResponseVo>().addData(response).success().build();
+        authService.createAdmin(requestDto);
+        return new ResponseMessageBuilder<Void>().success().build();
     }
 
 

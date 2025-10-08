@@ -69,5 +69,13 @@ public class AuthController {
         return new ResponseMessageBuilder<Void>().success().build();
     }
 
+    @PostMapping("/admin/set-password")
+    public ResponseMessageBuilder.ResponseMessage<Void> adminSetPassword(
+            @Valid @RequestBody AdminSetPasswordRequestVo req) {
+        AdminSetPasswordRequestDto reqDto = userMapper.toAdminSetPasswordRequestDto(req);
+        authService.adminSetPassword(reqDto);
+        return new ResponseMessageBuilder<Void>().success().build();
+    }
+
 
 }

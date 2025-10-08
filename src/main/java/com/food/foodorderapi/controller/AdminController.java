@@ -77,8 +77,6 @@ public class AdminController {
     }
 
 
-
-
     @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN','SCOPE_ROLE_SUPERADMIN')")
     @GetMapping("/get-all-user")
     public ResponseMessageBuilder.ResponseMessage<PageResponse<UserResponseVo>> listAllUser(

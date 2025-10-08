@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.food.foodorderapi.dto.request.*;
-import com.food.foodorderapi.dto.response.AdminCreateResultDto;
 import com.food.foodorderapi.dto.response.AdminResultDto;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
 import com.food.foodorderapi.dto.response.UserResultDto;
@@ -25,11 +24,13 @@ public interface AuthService {
 
     void performPasswordReset(PerformPasswordResetRequestDto performPassDto);
 
-    AdminCreateResultDto createAdmin(AdminCreateRequestDto requestDto);
+    void createAdmin(AdminCreateRequestDto requestDto);
 
     void deleteAdmin(AdminDeleteRequestDto requestDto);
 
     Page<UserResultDto> findAll(Pageable pageable);
 
     Page<AdminResultDto> findAllAdmin(Pageable pageable);
+
+    void adminSetPassword (AdminSetPasswordRequestDto request);
 }

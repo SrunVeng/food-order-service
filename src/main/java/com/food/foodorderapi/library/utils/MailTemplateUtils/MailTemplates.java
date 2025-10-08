@@ -454,6 +454,158 @@ public final class MailTemplates {
         );
     }
 
+    public String adminInviteEmail(
+            String appName,
+            String invitedBy,       // display name of inviter, optional
+            String setPasswordUrl,  // link to your frontend route with token
+            String supportEmail,
+            String companyName,
+            String companyAddress,
+            String logoUrl
+    ) {
+        String safeLogo = (logoUrl == null || logoUrl.isBlank())
+                ? "https://via.placeholder.com/140x40?text=" + urlEncode(appName)
+                : logoUrl;
+
+        return """
+        <!doctype html>
+        <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+          <meta charset="utf-8">
+          <meta http-equiv="x-ua-compatible" content="ie=edge">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <meta name="color-scheme" content="light dark">
+          <meta name="supported-color-schemes" content="light dark">
+          <title>%1$s admin invitation</title>
+          <style>
+            html, body { margin:0 !important; padding:0 !important; height:100%% !important; }
+            body { width:100%% !important; -webkit-text-size-adjust:100%%; -ms-text-size-adjust:100%%; }
+            table, td { mso-table-lspace:0pt; mso-table-rspace:0pt; }
+            img { -ms-interpolation-mode:bicubic; border:0; outline:none; text-decoration:none; }
+            a { text-decoration:none; }
+            .wrapper { width:100%%; background:#f6f8fb; }
+            .container { width:100%%; max-width:640px; margin:0 auto; }
+            .card { background:#ffffff; border-radius:12px; overflow:hidden; }
+            .px { padding-left:24px; padding-right:24px; }
+            .py { padding-top:24px; padding-bottom:24px; }
+            .center { text-align:center; }
+            .muted { color:#6b7280; font-size:14px; line-height:1.6; }
+            .heading { font-size:22px; line-height:1.3; color:#111827; margin:0 0 8px 0; }
+            .body { font-size:16px; line-height:1.7; color:#1f2937; margin:0; }
+            .btn { display:inline-block; padding:14px 22px; border-radius:10px;
+                   background:#111827; color:#ffffff !important; font-weight:600; }
+            .spacer-16 { height:16px; line-height:16px; font-size:16px; }
+            .spacer-24 { height:24px; line-height:24px; font-size:24px; }
+            @media (prefers-color-scheme: dark) {
+              .wrapper { background:#0b0f14 !important; }
+              .card { background:#0f1620 !important; }
+              .heading { color:#e5e7eb !important; }
+              .body { color:#d1d5db !important; }
+              .muted { color:#9ca3af !important; }
+              .btn { background:#2563eb !important; }
+            }
+            @media screen and (max-width: 480px) {
+              .px { padding-left:16px !important; padding-right:16px !important; }
+              .py { padding-top:20px !important; padding-bottom:20px !important; }
+              .heading { font-size:20px !important; }
+              .body { font-size:15px !important; }
+            }
+          </style>
+        </head>
+        <body style="background:#f6f8fb;">
+          <div style="display:none; max-height:0; overflow:hidden; opacity:0; mso-hide:all;">
+            You have been granted admin access to %1$s. Set your password to get started.
+          </div>
+
+          <table role="presentation" cellpadding="0" cellspacing="0" class="wrapper" width="100%%">
+            <tr>
+              <td align="center">
+                <table role="presentation" cellpadding="0" cellspacing="0" class="container">
+                  <tr><td class="spacer-24">&nbsp;</td></tr>
+
+                  <tr>
+                    <td class="center">
+                      <img src="%7$s" width="140" height="40" alt="%1$s" style="display:block;">
+                    </td>
+                  </tr>
+                  <tr><td class="spacer-24">&nbsp;</td></tr>
+
+                  <tr>
+                    <td class="card px py">
+                      <table role="presentation" width="100%%" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td>
+                            <h1 class="heading">You’ve been invited as an admin</h1>
+                            <p class="body">
+                              %2$s has invited you to be an administrator on <strong>%1$s</strong>.
+                              To activate your access, please set your password:
+                            </p>
+                          </td>
+                        </tr>
+
+                        <tr><td class="spacer-16">&nbsp;</td></tr>
+
+                        <tr>
+                          <td class="center">
+                            <a class="btn" href="%3$s" target="_blank" rel="noopener">
+                              Set your password
+                            </a>
+                          </td>
+                        </tr>
+
+                        <tr><td class="spacer-16">&nbsp;</td></tr>
+
+                        <tr>
+                          <td>
+                            <p class="muted">
+                              Having trouble with the button? Paste this link in your browser:
+                              <br>
+                              <a href="%3$s" style="word-break:break-all; color:#2563eb;">%3$s</a>
+                            </p>
+                            <p class="muted">
+                              For security, this link may expire soon. If it does, ask your team to resend your invite.
+                            </p>
+                            <p class="body" style="margin:0;">
+                              Questions? Contact
+                              <a href="mailto:%4$s" style="color:#2563eb;">%4$s</a>.
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <tr><td class="spacer-24">&nbsp;</td></tr>
+                  <tr>
+                    <td class="px">
+                      <table role="presentation" width="100%%" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td class="muted" style="font-size:12px;">
+                            %5$s • %6$s
+                          </td>
+                        </tr>
+                        <tr><td class="spacer-24">&nbsp;</td></tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+        """.formatted(
+                safe(appName),
+                safe(invitedBy),
+                safe(setPasswordUrl),
+                safe(supportEmail),
+                safe(companyName),
+                safe(companyAddress),
+                safeLogo
+        );
+    }
+
     /* ------------ helpers ------------ */
     private String safe(String s) { return s == null ? "" : s; }
 

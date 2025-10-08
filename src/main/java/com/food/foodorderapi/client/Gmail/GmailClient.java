@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.food.foodorderapi.library.utils.MailTemplateUtils.MailTemplates;
+import com.food.foodorderapi.library.utils.NumberGenerator.TokenGenerator;
 
 @Component
 @RequiredArgsConstructor
@@ -119,6 +120,39 @@ public class GmailClient {
         } catch (Exception e) {
             log.error("Failed to send reset email to {}", toEmail, e);
             throw new RuntimeException("Failed to send reset email", e);
+        }
+    }
+    public void sendAdminInvite(String toEmail, String invitedByDisplayName) {
+
+        String token = TokenGenerator.generateToken();
+        if (!StringUtils.hasText(toEmail) || !EmailValidator.getInstance().isValid(toEmail)) {
+            log.warn("Not sending admin invite: invalid recipient '{}'", toEmail);
+            return;
+        }
+
+        // Example target page in your React app; adjust path if needed:
+        // e.g. /admin/set-password or /set-password
+        String inviteUrl = WebPortalUrl + "/admin/set-password?token=" +
+                URLEncoder.encode(token, StandardCharsets.UTF_8);
+
+        String subject = APP_NAME + " admin access — set your password";
+
+        String html = MailTemplates.adminInviteEmail(
+                APP_NAME,
+                invitedByDisplayName,   // who invited them (optional; can pass "" if unknown)
+                inviteUrl,
+                SUPPORT_EMAIL,
+                COMPANY_NAME,
+                COMPANY_ADDR,
+                LOGO_URL
+        );
+
+        try {
+            sendHtml(toEmail, subject, html);
+            log.info("Sent admin invite to {}", toEmail);
+        } catch (MessagingException ex) {
+            log.error("Failed to send admin invite to {}", toEmail, ex);
+            throw new RuntimeException("Failed to send admin invite", ex);
         }
     }
 }

@@ -29,6 +29,7 @@ public class EmailVerificationOTP {
     @Column(nullable = false)
     private Status status;
 
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Purpose purpose = Purpose.REGISTER;

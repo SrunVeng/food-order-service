@@ -13,7 +13,8 @@ public enum ErrorCode {
     OTP_EXPIRED("ERR005", "OTP Expired"),
     OTP_INCORRECT("ERR006", "OTP Incorrect"),
     EMAIL_DOES_NOT_EXIST("ERR007", "Email Does Not Exist"),
-    INVALID_EXPIRED_RESET_LINK("ERR008", " Invalid or expired reset link"),;
+    INVALID_EXPIRED_RESET_LINK("ERR008", " Invalid or expired reset link"),
+    TOKEN_NOT_FOUND("ERR009", "TOKEN Not Found"),;
 
 
 

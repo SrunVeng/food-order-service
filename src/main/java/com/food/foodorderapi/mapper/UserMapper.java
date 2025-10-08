@@ -2,6 +2,9 @@ package com.food.foodorderapi.mapper;
 
 
 
+import com.food.foodorderapi.dto.response.AdminCreateResultDto;
+import com.food.foodorderapi.vo.response.AdminCreateResponseVo;
+import jakarta.validation.Valid;
 import org.mapstruct.*;
 
 import com.food.foodorderapi.dto.request.*;
@@ -28,4 +31,10 @@ public interface UserMapper {
     PerformPasswordResetRequestDto toPerformPassDto(PerformPasswordResetRequestVo requestVo);
 
     UserResetPasswordRequestDto toUserResetPasswordRequestDto(UserResetPasswordRequestVo request);
+
+    AdminCreateRequestDto toAdminCreateRequestDto(AdminCreateRequestVo request);
+
+    AdminCreateResponseVo toAdminCreateResponseVo(AdminCreateResultDto adminCreateResultDto);
+
+    AdminDeleteRequestDto toAdminDeleteRequestDto(@Valid AdminDeleteRequestVo request);
 }

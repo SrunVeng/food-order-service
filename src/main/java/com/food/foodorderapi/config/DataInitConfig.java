@@ -30,9 +30,12 @@ public class DataInitConfig {
         user.setName("USER");
         Role admin = new Role() ;
         admin.setName("ADMIN");
+        Role superAdmin = new Role() ;
+        admin.setName("SUPERADMIN");
         List<Role> roles = new ArrayList<>();
         roles.add(user);
         roles.add(admin);
+        roles.add(superAdmin);
         roleRepository.saveAll(roles);
     }
 }

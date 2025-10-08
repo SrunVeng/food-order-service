@@ -1,6 +1,7 @@
 package com.food.foodorderapi.service;
 
 import com.food.foodorderapi.dto.request.*;
+import com.food.foodorderapi.dto.response.AdminCreateResultDto;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
 
 
@@ -19,4 +20,8 @@ public interface AuthService {
     void userRegisterVerify(UserRegisterVerifyRequestDto requestDto);
 
     void performPasswordReset(PerformPasswordResetRequestDto performPassDto);
+
+    AdminCreateResultDto createAdmin(AdminCreateRequestDto requestDto);
+
+    void deleteAdmin(AdminDeleteRequestDto requestDto);
 }

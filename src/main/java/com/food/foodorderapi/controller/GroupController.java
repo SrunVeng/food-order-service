@@ -26,6 +26,7 @@ public class GroupController {
         return new ResponseMessageBuilder<Void>().success().build();
     }
 
+
     @DeleteMapping("/delete")
     public ResponseMessageBuilder.ResponseMessage<Void> delete(@Valid @RequestBody GroupDeleteRequestVo request) {
         groupService.deleteGroup(groupMapper.toGroupDeleteRequestDto(request));

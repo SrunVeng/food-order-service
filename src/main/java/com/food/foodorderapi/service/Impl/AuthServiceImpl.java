@@ -1,6 +1,7 @@
 package com.food.foodorderapi.service.Impl;
 
 
+import com.food.foodorderapi.dto.response.AdminCreateResultDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -284,6 +285,16 @@ public class AuthServiceImpl implements AuthService {
         prt.setStatus(PasswordResetToken.Status.USED);
         prt.setUsedAt(Instant.now());
         passwordResetTokenRepository.save(prt);
+
+    }
+
+    @Override
+    public AdminCreateResultDto createAdmin(AdminCreateRequestDto requestDto) {
+        return null;
+    }
+
+    @Override
+    public void deleteAdmin(AdminDeleteRequestDto requestDto) {
 
     }
 }

@@ -25,4 +25,5 @@ public interface GroupMapper {
 
   GroupResultDto toGroupResultDto(Group group);
 
+  GroupUpdateRequestDto toGroupUpdateRequestDto(GroupUpdateRequestVo request);
 }

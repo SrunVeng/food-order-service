@@ -1,6 +1,7 @@
 package com.food.foodorderapi.controller;
 
 
+import com.food.foodorderapi.vo.request.GroupUpdateRequestVo;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +34,13 @@ public class GroupController {
     @PostMapping("/create")
     public ResponseMessageBuilder.ResponseMessage<Void> create(@Valid @RequestBody GroupCreateRequestVo request) {
         groupService.createGroup(groupMapper.toGroupCreateRequestDto(request));
+        return new ResponseMessageBuilder<Void>().success().build();
+    }
+
+    @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_USER')")
+    @PostMapping("/update")
+    public ResponseMessageBuilder.ResponseMessage<Void> update(@Valid @RequestBody GroupUpdateRequestVo request) {
+        groupService.updateGroup(groupMapper.toGroupUpdateRequestDto(request));
         return new ResponseMessageBuilder<Void>().success().build();
     }
 

@@ -1,5 +1,6 @@
 package com.food.foodorderapi.service;
 
+import com.food.foodorderapi.dto.request.GroupUpdateRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,4 +15,6 @@ public interface GroupService {
     void deleteGroup(GroupDeleteRequestDto requestDto);
 
     Page<GroupResultDto> findAll(Pageable pageable);
+
+    void updateGroup(GroupUpdateRequestDto groupUpdateRequestDto);
 }

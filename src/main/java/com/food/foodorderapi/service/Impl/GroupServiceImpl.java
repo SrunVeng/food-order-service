@@ -1,5 +1,6 @@
 package com.food.foodorderapi.service.Impl;
 
+import com.food.foodorderapi.dto.request.GroupUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +29,11 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public void updateGroup(GroupUpdateRequestDto groupUpdateRequestDto) {
+
+    }
+
+    @Override
     public void deleteGroup(GroupDeleteRequestDto requestDto) {
 
     }
@@ -36,4 +42,5 @@ public class GroupServiceImpl implements GroupService {
     public Page<GroupResultDto> findAll(Pageable pageable) {
         return groupRepository.findAll(pageable).map(groupMapper::toGroupResultDto);
     }
+
 }

@@ -1,10 +1,11 @@
 package com.food.foodorderapi.vo.response;
 
 
-import com.food.foodorderapi.entity.Menu;
 import lombok.Data;
 
 import java.util.List;
+
+import com.food.foodorderapi.entity.Menu;
 
 @Data
 public class RestaurantResponseVo {

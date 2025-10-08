@@ -4,6 +4,7 @@ package com.food.foodorderapi.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -27,5 +28,7 @@ public class Group {
     private Restaurant restaurant;
 
     private String gatherPlaceLink;
+
+    private Instant createdAt;
 
 }

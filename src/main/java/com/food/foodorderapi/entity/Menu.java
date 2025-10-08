@@ -4,6 +4,7 @@ package com.food.foodorderapi.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -24,6 +25,7 @@ public class Menu {
     @Column
     private String basePrice;
 
+    private Instant createdAt;
 
     @ManyToMany
     @JoinTable(

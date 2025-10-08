@@ -1,17 +1,16 @@
 package com.food.foodorderapi.vo.response;
 
 
-
+import com.food.foodorderapi.entity.Menu;
 import lombok.Data;
 
-@Data
-public class RestaurantCreateResponseVo {
+import java.util.List;
 
+@Data
+public class RestaurantResponseVo {
 
     private String name;
     private String locationLink;
-    private String ownerChatId;
     private String ownerPhoneNumber;
-    private String ownerName;
-
+    private List<Menu> menus;
 }

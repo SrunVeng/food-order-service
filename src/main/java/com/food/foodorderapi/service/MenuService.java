@@ -3,9 +3,14 @@ package com.food.foodorderapi.service;
 import com.food.foodorderapi.dto.request.MenuCreateRequestDto;
 import com.food.foodorderapi.dto.request.MenuDeleteRequestDto;
 import com.food.foodorderapi.dto.response.MenuCreateResultDto;
+import com.food.foodorderapi.dto.response.MenuResultDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface MenuService {
     MenuCreateResultDto create(MenuCreateRequestDto requestDto);
 
     void delete(MenuDeleteRequestDto requestDto);
+
+    Page<MenuResultDto> findAll(Pageable pageable);
 }

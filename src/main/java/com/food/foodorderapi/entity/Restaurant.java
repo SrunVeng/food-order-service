@@ -4,6 +4,7 @@ package com.food.foodorderapi.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -18,7 +19,8 @@ public class Restaurant {
 
     private String locationLink;
 
-    //ToDo
+    private Instant createdAt;
+
     private String ownerChatId;
 
     private String ownerName;

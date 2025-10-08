@@ -4,10 +4,11 @@ package com.food.foodorderapi.dto.response;
 import lombok.Data;
 
 @Data
-public class MenuCreateResultDto {
+public class MenuResultDto {
 
 
     private String name;
     private String description;
     private String basePrice;
+
 }

@@ -1,6 +1,9 @@
 package com.food.foodorderapi.mapper;
 
 
+import com.food.foodorderapi.dto.response.RestaurantResultDto;
+import com.food.foodorderapi.entity.Restaurant;
+import com.food.foodorderapi.vo.response.RestaurantResponseVo;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
@@ -23,4 +26,8 @@ public interface RestaurantMapper {
     RestaurantCreateResponseVo toRestaurantCreateResponseVo(RestaurantCreateResultDto responseDto);
 
     RestaurantDeleteRequestDto toRestaurantDeleteRequestDto(RestaurantDeleteRequestVo request);
+
+    RestaurantResponseVo toRestaurantResponseVo(RestaurantResultDto restaurant);
+
+    RestaurantResultDto toRestaurantResultDto(Restaurant restaurant);
 }

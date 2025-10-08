@@ -15,6 +15,8 @@ public class Group {
     @Id
     private Long id;
 
+    private String groupName;
+
     @ManyToMany
     @JoinTable(
             name = "groups_users",
@@ -29,6 +31,14 @@ public class Group {
 
     private String gatherPlaceLink;
 
+    private String gatherPlaceDetails;
+
     private Instant createdAt;
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
+    public enum Status { OPEN, ENDED }
 
 }

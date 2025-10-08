@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class GroupDeleteRequestDto {
-
+    private Long groupId;
 
 }

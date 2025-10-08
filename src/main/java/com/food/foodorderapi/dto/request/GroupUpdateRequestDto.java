@@ -6,6 +6,11 @@ import lombok.Data;
 @Data
 public class GroupUpdateRequestDto {
 
+    private Long groupId;
+    private String groupName;
+    private Long restaurantId;
+    private String gatherPlaceLink;
+    private String gatherPlaceDetails;
 
 
 }

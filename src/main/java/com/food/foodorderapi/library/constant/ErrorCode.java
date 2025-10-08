@@ -17,7 +17,8 @@ public enum ErrorCode {
     TOKEN_NOT_FOUND("ERR009", "TOKEN Not Found"),
     USER_NOT_FOUND("ERR010", "USER Not Found"),
     MENU_NOT_FOUND("ERR011", "MENU Not Found"),
-    RESTAURANT_NOT_FOUND("ERR012", "Restaurant Not Found"),;
+    RESTAURANT_NOT_FOUND("ERR012", "Restaurant Not Found"),
+    GROUP_NOT_FOUND("ERR013", "Group Not Found"),;
 
 
 

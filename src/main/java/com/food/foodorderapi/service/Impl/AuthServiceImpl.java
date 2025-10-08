@@ -1,13 +1,11 @@
 package com.food.foodorderapi.service.Impl;
 
 
-import com.food.foodorderapi.dto.response.AdminCreateResultDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
@@ -15,6 +13,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -30,7 +30,10 @@ import org.springframework.stereotype.Service;
 
 import com.food.foodorderapi.client.Gmail.GmailClient;
 import com.food.foodorderapi.dto.request.*;
+import com.food.foodorderapi.dto.response.AdminCreateResultDto;
+import com.food.foodorderapi.dto.response.AdminResultDto;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
+import com.food.foodorderapi.dto.response.UserResultDto;
 import com.food.foodorderapi.entity.EmailVerificationOTP;
 import com.food.foodorderapi.entity.PasswordResetToken;
 import com.food.foodorderapi.entity.Role;
@@ -236,7 +239,7 @@ public class AuthServiceImpl implements AuthService {
         Role role = roleRepository.findByName("USER");
         user.setRoles(Collections.singletonList(role));
 
-        user.setCreatedAt(LocalDate.now().toString());
+        user.setCreatedAt(Instant.now());
         user.setIsVerified(true);
         user.setIsBlock(false);
         user.setIsAccountNonExpired(true);
@@ -296,5 +299,15 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void deleteAdmin(AdminDeleteRequestDto requestDto) {
 
+    }
+
+    @Override
+    public Page<UserResultDto> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable).map(userMapper::toUserResultDto);
+    }
+
+    @Override
+    public Page<AdminResultDto> findAllAdmin(Pageable pageable) {
+        return userRepository.findAllAdmin(pageable).map(userMapper::toAdminResultDto);
     }
 }

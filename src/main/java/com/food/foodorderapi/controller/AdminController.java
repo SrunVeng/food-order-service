@@ -4,20 +4,29 @@ package com.food.foodorderapi.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.food.foodorderapi.dto.request.*;
 import com.food.foodorderapi.dto.response.MenuCreateResultDto;
 import com.food.foodorderapi.dto.response.RestaurantCreateResultDto;
+import com.food.foodorderapi.dto.response.UserResultDto;
+import com.food.foodorderapi.library.messagebuilder.PageResponse;
 import com.food.foodorderapi.library.messagebuilder.ResponseMessageBuilder;
 import com.food.foodorderapi.mapper.MenuMapper;
 import com.food.foodorderapi.mapper.RestaurantMapper;
+import com.food.foodorderapi.mapper.UserMapper;
+import com.food.foodorderapi.service.AuthService;
 import com.food.foodorderapi.service.MenuService;
 import com.food.foodorderapi.service.RestaurantService;
 import com.food.foodorderapi.vo.request.*;
 import com.food.foodorderapi.vo.response.MenuCreateResponseVo;
 import com.food.foodorderapi.vo.response.RestaurantCreateResponseVo;
+import com.food.foodorderapi.vo.response.UserResponseVo;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,6 +37,8 @@ public class AdminController {
     private final MenuMapper menuMapper;
     private final RestaurantService restaurantService;
     private final MenuService menuService;
+    private final AuthService authService;
+    private final UserMapper userMapper;
 
     @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN','SCOPE_ROLE_SUPERADMIN')")
     @PostMapping("/create/restaurants")
@@ -63,6 +74,20 @@ public class AdminController {
         MenuDeleteRequestDto requestDto = menuMapper.toMenuDeleteRequestDto(request);
         menuService.delete(requestDto);
         return new ResponseMessageBuilder<Void>().success().build();
+    }
+
+
+
+
+    @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN','SCOPE_ROLE_SUPERADMIN')")
+    @GetMapping("/get-all-user")
+    public ResponseMessageBuilder.ResponseMessage<PageResponse<UserResponseVo>> listAllUser(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable
+    ) {
+        Page<UserResultDto> page = authService.findAll(pageable);
+        PageResponse<UserResponseVo> payload = PageResponse.from(page.map(userMapper::toUserResponseVo));
+        return new ResponseMessageBuilder<PageResponse<UserResponseVo>>().success().addData(payload).build();
     }
 
 

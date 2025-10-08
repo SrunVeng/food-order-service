@@ -4,7 +4,10 @@ package com.food.foodorderapi.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.food.foodorderapi.library.UserID.UserId;
@@ -30,7 +33,9 @@ public class User {
     private String email;
     private String phoneNumber;
 
-    private String CreatedAt;
+    @Column(name = "created_at", updatable = false, nullable = false)
+    @CreationTimestamp
+    private Instant createdAt;
 
     private String ChatId;
 

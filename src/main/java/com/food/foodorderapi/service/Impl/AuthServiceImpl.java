@@ -310,7 +310,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void deleteAdmin(AdminDeleteRequestDto requestDto) {
-
+        User byUserNo = userRepository.findByUserNo(requestDto.getUserNo());
+        if(ObjectUtils.isEmpty(byUserNo)){
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND.getCode(), ErrorCode.USER_NOT_FOUND.getMessage());
+        }
+        userRepository.deleteAdminByUserNo(byUserNo.getUserNo());
+        gmailClient.sendRemoveConfirmationtoUser(byUserNo.getEmail());
     }
 
     @Override

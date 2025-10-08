@@ -155,4 +155,27 @@ public class GmailClient {
             throw new RuntimeException("Failed to send admin invite", ex);
         }
     }
+    public void sendRemoveConfirmationtoUser(String toEmail) { // keep exact name used by caller
+        if (!StringUtils.hasText(toEmail) || !EmailValidator.getInstance().isValid(toEmail)) {
+            log.warn("Not sending admin removal notice: invalid recipient '{}'", toEmail);
+            return;
+        }
+
+        String subject = APP_NAME + " admin access removed";
+        String html = MailTemplates.adminRemovedEmail(
+                APP_NAME,
+                SUPPORT_EMAIL,
+                COMPANY_NAME,
+                COMPANY_ADDR,
+                LOGO_URL
+        );
+
+        try {
+            sendHtml(toEmail, subject, html);
+            log.info("Sent admin removal notice to {}", toEmail);
+        } catch (MessagingException ex) {
+            log.error("Failed to send admin removal notice to {}", toEmail, ex);
+            // no rethrow to avoid masking delete operation result
+        }
+    }
 }

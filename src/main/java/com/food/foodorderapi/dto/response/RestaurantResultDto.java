@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 public class RestaurantResultDto {
 
+    private String id;
     private String name;
     private String locationLink;
     private String ownerPhoneNumber;

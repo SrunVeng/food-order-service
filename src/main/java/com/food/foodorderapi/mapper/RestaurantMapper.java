@@ -1,18 +1,17 @@
 package com.food.foodorderapi.mapper;
 
 
+import com.food.foodorderapi.dto.request.*;
 import com.food.foodorderapi.dto.response.RestaurantResultDto;
 import com.food.foodorderapi.entity.Restaurant;
+import com.food.foodorderapi.vo.request.*;
 import com.food.foodorderapi.vo.response.RestaurantResponseVo;
+import jakarta.validation.Valid;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
-import com.food.foodorderapi.dto.request.RestaurantCreateRequestDto;
-import com.food.foodorderapi.dto.request.RestaurantDeleteRequestDto;
 import com.food.foodorderapi.dto.response.RestaurantCreateResultDto;
-import com.food.foodorderapi.vo.request.RestaurantCreateRequestVo;
-import com.food.foodorderapi.vo.request.RestaurantDeleteRequestVo;
 import com.food.foodorderapi.vo.response.RestaurantCreateResponseVo;
 
 @Mapper(
@@ -30,4 +29,10 @@ public interface RestaurantMapper {
     RestaurantResponseVo toRestaurantResponseVo(RestaurantResultDto restaurant);
 
     RestaurantResultDto toRestaurantResultDto(Restaurant restaurant);
+
+    RestaurantMenuUpdateRequestDto toRestaurantUpdateRequestDto(RestaurantMenuUpdateRequestVo request);
+
+    RestaurantMenuDeleteRequestDto toRestaurantMenuDeleteRequestDto(RestaurantMenuDeleteRequestVo request);
+
+    RestaurantUpdateRequestDto toRestaurantUpdateRequestDto(RestaurantUpdateRequestVo request);
 }

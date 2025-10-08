@@ -1,8 +1,10 @@
 package com.food.foodorderapi.service.Impl;
 
+import com.food.foodorderapi.dto.request.MenuUpdateRequestDto;
 import com.food.foodorderapi.dto.response.MenuCreateResultDto;
 import com.food.foodorderapi.dto.response.MenuResultDto;
 import com.food.foodorderapi.entity.Menu;
+import com.food.foodorderapi.entity.Restaurant;
 import com.food.foodorderapi.library.constant.ErrorCode;
 import com.food.foodorderapi.library.exception.BusinessException;
 import com.food.foodorderapi.mapper.MenuMapper;
@@ -61,4 +63,17 @@ public class MenuServiceImpl implements MenuService {
         return menuRepository.findAll(pageable).map(menuMapper::toMenuResultDto);
     }
 
+    @Override
+    public void updateMenu(MenuUpdateRequestDto requestDto) {
+        Menu menu = menuRepository.findById(requestDto.getId())
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.MENU_NOT_FOUND.getCode(),
+                        ErrorCode.MENU_NOT_FOUND.getMessage()
+                ));
+
+        menu.setName(requestDto.getName());
+        menu.setDescription(requestDto.getDescription());
+        menu.setBasePrice(requestDto.getBasePrice());
+        menuRepository.save(menu);
+    }
 }

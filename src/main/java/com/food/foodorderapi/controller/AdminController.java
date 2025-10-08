@@ -2,6 +2,7 @@ package com.food.foodorderapi.controller;
 
 
 import com.food.foodorderapi.dto.response.MenuCreateResultDto;
+import com.food.foodorderapi.vo.response.MenuUpdateRequestVo;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -49,6 +50,22 @@ public class AdminController {
         return new ResponseMessageBuilder<RestaurantCreateResponseVo>().addData(response).success().build();
     }
 
+    @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN','SCOPE_ROLE_SUPERADMIN')")
+    @DeleteMapping("/update/restaurants")
+    public ResponseMessageBuilder.ResponseMessage<Void> updateRestaurants(@Valid @RequestBody RestaurantUpdateRequestVo request) {
+        RestaurantUpdateRequestDto requestDto = restaurantMapper.toRestaurantUpdateRequestDto(request);
+        restaurantService.updateRestaurant(requestDto);
+        return new ResponseMessageBuilder<Void>().success().build();
+    }
+
+    @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN','SCOPE_ROLE_SUPERADMIN')")
+    @DeleteMapping("/delete/restaurants")
+    public ResponseMessageBuilder.ResponseMessage<Void> deleteRestaurants(@Valid @RequestBody RestaurantDeleteRequestVo request) {
+        RestaurantDeleteRequestDto requestDto = restaurantMapper.toRestaurantDeleteRequestDto(request);
+        restaurantService.delete(requestDto);
+        return new ResponseMessageBuilder<Void>().success().build();
+    }
+
 
     @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN','SCOPE_ROLE_SUPERADMIN')")
     @PostMapping("/create/menus")
@@ -59,12 +76,11 @@ public class AdminController {
         return new ResponseMessageBuilder<MenuCreateResponseVo>().addData(response).success().build();
     }
 
-
     @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN','SCOPE_ROLE_SUPERADMIN')")
-    @DeleteMapping("/delete/restaurants")
-    public ResponseMessageBuilder.ResponseMessage<Void> deleteRestaurants(@Valid @RequestBody RestaurantDeleteRequestVo request) {
-        RestaurantDeleteRequestDto requestDto = restaurantMapper.toRestaurantDeleteRequestDto(request);
-        restaurantService.delete(requestDto);
+    @DeleteMapping("/update/menus")
+    public ResponseMessageBuilder.ResponseMessage<Void> updateMenus(@Valid @RequestBody MenuUpdateRequestVo request) {
+        MenuUpdateRequestDto requestDto = menuMapper.toMenuUpdateRequestDto(request);
+        menuService.updateMenu(requestDto);
         return new ResponseMessageBuilder<Void>().success().build();
     }
 

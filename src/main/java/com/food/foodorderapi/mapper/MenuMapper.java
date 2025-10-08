@@ -3,10 +3,13 @@ package com.food.foodorderapi.mapper;
 
 
 
+import com.food.foodorderapi.dto.request.MenuUpdateRequestDto;
 import com.food.foodorderapi.dto.response.MenuCreateResultDto;
 import com.food.foodorderapi.dto.response.MenuResultDto;
 import com.food.foodorderapi.entity.Menu;
 import com.food.foodorderapi.vo.response.MenuResponseVo;
+import com.food.foodorderapi.vo.response.MenuUpdateRequestVo;
+import jakarta.validation.Valid;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
@@ -32,4 +35,6 @@ public interface MenuMapper {
 
     MenuResponseVo toMenuResponseVo(MenuResultDto dto);
     MenuResultDto toMenuResultDto(Menu menu);
+
+    MenuUpdateRequestDto toMenuUpdateRequestDto(MenuUpdateRequestVo request);
 }

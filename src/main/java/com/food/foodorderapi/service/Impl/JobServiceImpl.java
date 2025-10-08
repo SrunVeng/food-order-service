@@ -1,6 +1,8 @@
 package com.food.foodorderapi.service.Impl;
 
 
+import com.food.foodorderapi.repository.AdminInviteTokenRepository;
+import com.food.foodorderapi.repository.GroupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,6 +23,8 @@ public class JobServiceImpl implements JobService {
 
     private final EmailVerificationOTPRepository  emailVerificationOTPRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final AdminInviteTokenRepository  adminInviteTokenRepository;
+    private final GroupRepository groupRepository;
 
     @Override
     public void clean() {
@@ -32,7 +36,11 @@ public class JobServiceImpl implements JobService {
         passwordResetTokenRepository.expireAllOlderThan(Instant.now());
         log.info("Change Status passwordResetTokenRepository to expired");
         passwordResetTokenRepository.deleteAllFinished();
-        log.info("Deleted passwordResetTokenRepository from DB expired");
+        log.info("Deleted passwordResetTokenRepository from DB finished");
+        adminInviteTokenRepository.deleteAllUsedTokens();
+        log.info("Deleted adminInviteTokenRepository from DB usedTokens");
+        groupRepository.deleteAllEndedGroups();
+        log.info("Deleted groupRepository from DB ended groups");
 
     }
 }

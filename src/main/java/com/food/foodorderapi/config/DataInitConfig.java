@@ -1,6 +1,8 @@
 package com.food.foodorderapi.config;
 
 
+import com.food.foodorderapi.entity.User;
+import com.food.foodorderapi.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
@@ -18,6 +20,8 @@ import com.food.foodorderapi.repository.RoleRepository;
 public class DataInitConfig {
 
     private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoderBean encoderBean;
 
     @PostConstruct
     @Transactional
@@ -33,5 +37,22 @@ public class DataInitConfig {
         roles.add(admin);
         roles.add(superAdmin);
         roleRepository.saveAll(roles);
+
+        User superAdminUser = new User();
+        superAdminUser.setUsername("super");
+        superAdminUser.setPassword(encoderBean.passwordEncoder().encode("123"));
+        List<Role> superAdminRole = new ArrayList<>();
+        superAdminRole.add(superAdmin);
+        superAdminUser.setRoles(superAdminRole);
+        superAdminUser.setEmail("asd");
+        superAdminUser.setIsAccountNonExpired(true);
+        superAdminUser.setIsAccountNonLocked(true);
+        superAdminUser.setIsCredentialsNonExpired(true);
+        superAdminUser.setIsBlock(false);
+        superAdminUser.setIsVerified(true);
+        userRepository.save(superAdminUser);
+
+
+
     }
 }

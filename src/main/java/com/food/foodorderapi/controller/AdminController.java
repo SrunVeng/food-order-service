@@ -51,7 +51,7 @@ public class AdminController {
     }
 
     @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN','SCOPE_ROLE_SUPERADMIN')")
-    @DeleteMapping("/update/restaurants")
+    @PutMapping("/update/restaurants")
     public ResponseMessageBuilder.ResponseMessage<Void> updateRestaurants(@Valid @RequestBody RestaurantUpdateRequestVo request) {
         RestaurantUpdateRequestDto requestDto = restaurantMapper.toRestaurantUpdateRequestDto(request);
         restaurantService.updateRestaurant(requestDto);

@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(auth -> auth
                         // Auth & H2 are open
-                        .requestMatchers("/api/v1/auth/**", "/h2-console/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/h2-console/**","/api/v1/jobs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

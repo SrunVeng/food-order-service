@@ -290,9 +290,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void createAdmin(AdminCreateRequestDto requestDto) {
+        User byusername = userRepository.findByusername(requestDto.getUsername());
+        if(!ObjectUtils.isEmpty(byusername)){
+            throw new BusinessException(ErrorCode.USER_NAME_ALREADY_EXIST.getCode(), ErrorCode.USER_NAME_ALREADY_EXIST.getMessage());
+        }
         User user = new User();
         user.setFirstName(requestDto.getFirstName());
         user.setLastName(requestDto.getLastName());
+        user.setUsername(requestDto.getUsername());
         user.setEmail(requestDto.getEmail());
         user.setPhoneNumber(requestDto.getPhoneNumber());
         user.setPassword(null);
@@ -312,7 +317,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void deleteAdmin(AdminDeleteRequestDto requestDto) {
-        User byUserNo = userRepository.findByUserNo(requestDto.getUserNo());
+        User byUserNo = userRepository.findByusername(requestDto.getUsername());
         if (ObjectUtils.isEmpty(byUserNo)) {
             throw new BusinessException(ErrorCode.USER_NOT_FOUND.getCode(), ErrorCode.USER_NOT_FOUND.getMessage());
         }

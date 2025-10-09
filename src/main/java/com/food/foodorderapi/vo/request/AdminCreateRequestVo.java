@@ -10,7 +10,7 @@ import lombok.Data;
 public class AdminCreateRequestVo {
 
     @NotBlank(message = "user name cannot be blank")
-    private String userName;
+    private String username;
 
     @NotBlank(message = "first name cannot be blank")
     private String firstName;

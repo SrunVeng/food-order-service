@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,13 +39,49 @@ public class GroupServiceImpl implements GroupService {
                         ErrorCode.RESTAURANT_NOT_FOUND.getCode(),
                         ErrorCode.RESTAURANT_NOT_FOUND.getMessage()
                 ));
+
+        int duration = requestDto.getDurationMinutes();
+        Instant start = requestDto.getEventStartAt();
+        Instant end   = start.plus(duration, ChronoUnit.MINUTES);
+        Instant now   = Instant.now();
+
+        // 3) Build entity
         Group group = new Group();
-        group.setGatherPlaceLink(requestDto.getGatherPlaceLink());
-        group.setGatherPlaceDetails(requestDto.getGatherPlaceDetails());
         group.setGroupName(requestDto.getGroupName());
         group.setRestaurant(restaurant);
-        group.setCreatedAt(Instant.now());
-        group.setStatus(Group.Status.OPEN);
+
+        group.setGatherPlaceLink(requestDto.getGatherPlaceLink());
+        group.setGatherPlaceDetails(requestDto.getGatherPlaceDetails());
+        group.setRemark(requestDto.getRemark());
+
+        // If you kept maxPeople as Integer in the entity (recommended):
+        group.setMaxPeople(requestDto.getMaxPeople());
+        // If your entity still has String maxPeople, use:
+        // group.setMaxPeople(String.valueOf(requestDto.getMaxPeople()));
+
+        // Meeting pin (optional but recommended)
+        if (requestDto.getMeeting() != null) {
+            Group.Meeting m = new Group.Meeting();
+            m.setLat(requestDto.getMeeting().getLat());
+            m.setLng(requestDto.getMeeting().getLng());
+            m.setLabel(requestDto.getMeeting().getLabel());
+            group.setMeeting(m);
+        }
+
+        // Timestamps
+        group.setCreatedAt(now);
+        group.setUpdatedAt(now);
+
+        // Scheduling fields
+        group.setEventStartAt(start);
+        group.setDurationMinutes(duration);
+        group.setEventEndAt(end);
+        group.setRsvpCloseAt(start); // RSVPs close at start time (simple rule)
+
+        // Status: OPEN until the eventEndAt passes (or use IN_PROGRESS if you added it)
+        group.setStatus(now.isBefore(end) ? Group.Status.OPEN : Group.Status.ENDED);
+
+        // 4) Persist
         groupRepository.save(group);
     }
 

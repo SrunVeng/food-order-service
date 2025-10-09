@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class AdminDeleteRequestDto {
 
-    private String userNo;
+    private String username;
 }

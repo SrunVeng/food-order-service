@@ -17,6 +17,12 @@ public class UserRegisterVerifyRequestVo {
     @NotBlank(message = "password cannot be blank")
     private String password;
 
+    @NotBlank(message = "gender cannot be blank")
+    private String gender;
+
+    @NotBlank(message = "dob cannot be blank")
+    private String dob;
+
     @NotBlank(message = "confirmPassword cannot be blank")
     private String confirmPassword;
 

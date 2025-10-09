@@ -37,7 +37,7 @@ public class EmailVerificationOTP {
     private int attempts = 0;
 
     public enum Status { OPEN, USED, EXPIRED }
-    public enum Purpose { REGISTER, RESET_PASSWORD }
+    public enum Purpose { REGISTER, RESET_PASSWORD,UPDATE_EMAIL }
 
 
 

@@ -97,6 +97,30 @@ public class GmailClient {
         }
     }
 
+    public void sendOtpForUpdateEmail(String email, String code) {
+        if (!StringUtils.hasText(email) || !EmailValidator.getInstance().isValid(email)) {
+            log.warn("Not sending update-email OTP: invalid recipient '{}'", email);
+            return;
+        }
+
+        String subject = APP_NAME + " email update verification code: " + code;
+        String html = MailTemplates.otpEmail(
+                APP_NAME,
+                code,
+                SUPPORT_EMAIL,
+                COMPANY_NAME,
+                COMPANY_ADDR,
+                LOGO_URL
+        );
+
+        try {
+            sendHtml(email, subject, html);
+            log.info("Sent update-email OTP to {}", email);
+        } catch (MessagingException ex) {
+            log.error("Failed to send update-email OTP to {}", email, ex);
+        }
+    }
+
     public void sendResetLink(String toEmail, String token) {
         if (!StringUtils.hasText(toEmail) || !EmailValidator.getInstance().isValid(toEmail)) {
             log.warn("Not sending reset link: invalid recipient '{}'", toEmail);

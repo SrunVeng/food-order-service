@@ -11,6 +11,7 @@ public class GroupUpdateRequestDto {
     private Long restaurantId;
     private String gatherPlaceLink;
     private String gatherPlaceDetails;
-
+    private String maxPeople;
+    private String remark;
 
 }

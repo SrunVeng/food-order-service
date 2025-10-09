@@ -1,7 +1,6 @@
 package com.food.foodorderapi.controller;
 
 
-import com.food.foodorderapi.vo.request.GroupUpdateRequestVo;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +18,7 @@ import com.food.foodorderapi.mapper.GroupMapper;
 import com.food.foodorderapi.service.GroupService;
 import com.food.foodorderapi.vo.request.GroupCreateRequestVo;
 import com.food.foodorderapi.vo.request.GroupDeleteRequestVo;
+import com.food.foodorderapi.vo.request.GroupUpdateRequestVo;
 import com.food.foodorderapi.vo.response.GroupResponseVo;
 
 @RestController

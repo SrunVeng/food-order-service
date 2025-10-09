@@ -30,6 +30,10 @@ public class User {
     private String firstName;
     private String lastName;
 
+    //TODO add this field to client
+    private String gender;
+    private String dob;
+
     private String email;
     private String phoneNumber;
 

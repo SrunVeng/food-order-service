@@ -9,11 +9,13 @@ import org.mapstruct.*;
 import com.food.foodorderapi.dto.request.*;
 import com.food.foodorderapi.dto.response.AdminResultDto;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
+import com.food.foodorderapi.dto.response.UserProfileResultDto;
 import com.food.foodorderapi.dto.response.UserResultDto;
 import com.food.foodorderapi.entity.User;
 import com.food.foodorderapi.vo.request.*;
 import com.food.foodorderapi.vo.response.AdminResponseVo;
 import com.food.foodorderapi.vo.response.UserLoginResponseVo;
+import com.food.foodorderapi.vo.response.UserProfileResponseVo;
 import com.food.foodorderapi.vo.response.UserResponseVo;
 
 @Mapper(
@@ -50,4 +52,15 @@ public interface UserMapper {
     AdminResultDto toAdminResultDto(User user);
 
     AdminSetPasswordRequestDto toAdminSetPasswordRequestDto(AdminSetPasswordRequestVo requestVo);
+
+    AdminUpdateRequestDto toAdminUpdateRequestDto(@Valid AdminUpdateRequestVo request);
+
+    UserProfileResponseVo toUserProfileResponseVo(UserProfileResultDto result);
+
+    UserProfileResultDto toUserProfileResultDto(User user);
+
+
+    UserUpdateProfileRequestDto toUserUpdateProfileRequestDto(UserUpdateProfileRequestVo requestVo);
+
+    UserUpdateProfileVerifyRequestDto toUserUpdateProfileVerifyRequestDto(UserUpdateProfileVerifyRequestVo requestVo);
 }

@@ -19,6 +19,10 @@ public class GroupCreateRequestVo {
     @NotBlank(message = "gatherPlaceLink cannot be blank")
     private String gatherPlaceLink;
 
+    @NotBlank(message = "maxPeople cannot be blank")
+    private String maxPeople;
+
     private String gatherPlaceDetails;
+    private String remark;
 
 }

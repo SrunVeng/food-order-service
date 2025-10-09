@@ -1,11 +1,11 @@
 package com.food.foodorderapi.service;
 
-import com.food.foodorderapi.dto.request.GroupUpdateRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.food.foodorderapi.dto.request.GroupCreateRequestDto;
 import com.food.foodorderapi.dto.request.GroupDeleteRequestDto;
+import com.food.foodorderapi.dto.request.GroupUpdateRequestDto;
 import com.food.foodorderapi.dto.response.GroupResultDto;
 
 public interface GroupService {

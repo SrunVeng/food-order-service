@@ -19,4 +19,8 @@ public class GroupUpdateRequestVo {
 
     private String gatherPlaceDetails;
 
+    private String maxPeople;
+
+    private String remark;
+
 }

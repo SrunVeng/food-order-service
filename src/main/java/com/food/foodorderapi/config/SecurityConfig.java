@@ -60,7 +60,7 @@ public class SecurityConfig {
         cfg.setAllowedOrigins(List.of(
                 "http://localhost:5173"
         ));
-        cfg.setAllowedMethods(List.of("GET","POST","DELETE"));
+        cfg.setAllowedMethods(List.of("GET","POST","DELETE","PUT"));
         cfg.setAllowedHeaders(List.of(
                 "Content-Type", "Authorization", "X-Requested-With", "Origin", "Accept",
                 "X-Guest-Id", "X-Guest-Name"

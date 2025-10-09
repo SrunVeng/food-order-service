@@ -1,20 +1,15 @@
 package com.food.foodorderapi.dto.request;
 
 
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class UserRegisterVerifyRequestDto {
-
+public class UserUpdateProfileRequestDto {
     private String firstName;
     private String lastName;
     private String email;
-    private String username;
-    private String password;
+    private String phoneNumber;
     private String gender;
     private String dob;
-    private String confirmPassword;
-    private String phoneNumber;
-    private String otp;
-
 }

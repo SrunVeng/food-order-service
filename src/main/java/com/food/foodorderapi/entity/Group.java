@@ -13,6 +13,7 @@ import java.util.List;
 public class Group {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String groupName;
@@ -34,6 +35,10 @@ public class Group {
     private String gatherPlaceDetails;
 
     private Instant createdAt;
+
+    //TODO add this to frontend
+    private String maxPeople;
+    private String remark;
 
 
     @Enumerated(EnumType.STRING)

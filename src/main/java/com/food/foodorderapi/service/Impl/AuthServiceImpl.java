@@ -1,16 +1,15 @@
 package com.food.foodorderapi.service.Impl;
 
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -33,6 +32,7 @@ import com.food.foodorderapi.client.Gmail.GmailClient;
 import com.food.foodorderapi.dto.request.*;
 import com.food.foodorderapi.dto.response.AdminResultDto;
 import com.food.foodorderapi.dto.response.UserLoginResultDto;
+import com.food.foodorderapi.dto.response.UserProfileResultDto;
 import com.food.foodorderapi.dto.response.UserResultDto;
 import com.food.foodorderapi.entity.*;
 import com.food.foodorderapi.library.constant.Constant;
@@ -43,6 +43,7 @@ import com.food.foodorderapi.library.utils.NumberGenerator.TokenGenerator;
 import com.food.foodorderapi.mapper.UserMapper;
 import com.food.foodorderapi.repository.*;
 import com.food.foodorderapi.service.AuthService;
+import org.springframework.util.StringUtils;
 
 
 @Service
@@ -168,7 +169,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void userRegister(UserRegisterRequestDto userRegisterRequestDto)  {
+    public void userRegister(UserRegisterRequestDto userRegisterRequestDto) {
 
         if (userRepository.existsByUsernameIgnoreCase(userRegisterRequestDto.getUsername())) {
             throw new BusinessException(
@@ -183,8 +184,8 @@ public class AuthServiceImpl implements AuthService {
                     ErrorCode.EMAIL_ALREADY_EXIST.getMessage()
             );
         }
-        if(!userRegisterRequestDto.getPassword().equals(userRegisterRequestDto.getConfirmPassword())){
-            throw new BusinessException(ErrorCode.PASSWORD_MISMATCH.getCode(),ErrorCode.PASSWORD_MISMATCH.getMessage());
+        if (!userRegisterRequestDto.getPassword().equals(userRegisterRequestDto.getConfirmPassword())) {
+            throw new BusinessException(ErrorCode.PASSWORD_MISMATCH.getCode(), ErrorCode.PASSWORD_MISMATCH.getMessage());
         }
 
         emailVerificationOTPRepository.findOpenByEmailAndPurpose(userRegisterRequestDto.getEmail(), EmailVerificationOTP.Purpose.REGISTER)
@@ -201,7 +202,7 @@ public class AuthServiceImpl implements AuthService {
         rec.setCreatedAt(Instant.now());
         rec.setExpiresAt(Instant.now().plus(Duration.ofMinutes(5)));
         emailVerificationOTPRepository.save(rec);
-        gmailClient.sendOtpForRegister(userRegisterRequestDto.getEmail(),code);
+        gmailClient.sendOtpForRegister(userRegisterRequestDto.getEmail(), code);
     }
 
     @Override
@@ -227,6 +228,8 @@ public class AuthServiceImpl implements AuthService {
         user.setLastName(requestDto.getLastName());
         user.setUsername(requestDto.getUsername());
         user.setEmail(requestDto.getEmail());
+        user.setGender(requestDto.getGender());
+        user.setDob(requestDto.getDob());
         user.setPhoneNumber(requestDto.getPhoneNumber());
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         user.setChatId(null);
@@ -246,13 +249,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
-
     @Override
     public void userResetPassword(UserResetPasswordRequestDto userResetPasswordRequestDto) {
 
         Optional<User> userOpt = userRepository.findByEmailIgnoreCase(userResetPasswordRequestDto.getEmail());
         if (userOpt.isEmpty()) {
-           throw new BusinessException(ErrorCode.EMAIL_DOES_NOT_EXIST.getCode(), ErrorCode.EMAIL_DOES_NOT_EXIST.getMessage());
+            throw new BusinessException(ErrorCode.EMAIL_DOES_NOT_EXIST.getCode(), ErrorCode.EMAIL_DOES_NOT_EXIST.getMessage());
         }
         User user = userOpt.get();
         String token = TokenGenerator.generateToken();
@@ -264,7 +266,7 @@ public class AuthServiceImpl implements AuthService {
         presetToken.setStatus(PasswordResetToken.Status.OPEN);
         presetToken.setUser(user);
         passwordResetTokenRepository.save(presetToken);
-        gmailClient.sendResetLink(user.getEmail(),presetToken.getToken());
+        gmailClient.sendResetLink(user.getEmail(), presetToken.getToken());
 
     }
 
@@ -305,13 +307,13 @@ public class AuthServiceImpl implements AuthService {
         user.setIsCredentialsNonExpired(true);
         user.setIsDeleted(false);
         userRepository.save(user);
-        gmailClient.sendAdminInvite(user.getEmail(),user.getUsername());
+        gmailClient.sendAdminInvite(user.getEmail(), user.getUsername());
     }
 
     @Override
     public void deleteAdmin(AdminDeleteRequestDto requestDto) {
         User byUserNo = userRepository.findByUserNo(requestDto.getUserNo());
-        if(ObjectUtils.isEmpty(byUserNo)){
+        if (ObjectUtils.isEmpty(byUserNo)) {
             throw new BusinessException(ErrorCode.USER_NOT_FOUND.getCode(), ErrorCode.USER_NOT_FOUND.getMessage());
         }
         userRepository.deleteAdminByUserNo(byUserNo.getUserNo());
@@ -331,7 +333,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void adminSetPassword(AdminSetPasswordRequestDto request) {
         AdminInviteToken byToken = adminInviteTokenRepository.findByToken(request.getToken());
-        if(ObjectUtils.isEmpty(byToken)) {
+        if (ObjectUtils.isEmpty(byToken)) {
             throw new BusinessException(ErrorCode.TOKEN_NOT_FOUND.getCode(), ErrorCode.TOKEN_NOT_FOUND.getMessage());
         }
         User user = byToken.getUser();
@@ -340,4 +342,177 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
         byToken.setStatus(AdminInviteToken.Status.USED);
     }
+
+    @Override
+    public void updateAdmin(AdminUpdateRequestDto requestDto) {
+
+    }
+
+    @Override
+    public UserProfileResultDto getbyUsername(String username) {
+        User byusername = userRepository.findByusername(username);
+        if (ObjectUtils.isEmpty(byusername)) {
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND.getCode(), ErrorCode.USER_NOT_FOUND.getMessage());
+        }
+        return userMapper.toUserProfileResultDto(byusername);
+    }
+
+    @Override
+    public void deletebyUsername(String username) {
+        User byusername = userRepository.findByusername(username);
+        if (ObjectUtils.isEmpty(byusername)) {
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND.getCode(), ErrorCode.USER_NOT_FOUND.getMessage());
+        }
+        userRepository.delete(byusername);
+    }
+
+    @Override
+    public void updateByUsername(String username, UserUpdateProfileRequestDto dto) {
+        User user = userRepository.findByusername(username);
+        if (ObjectUtils.isEmpty(user)) {
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND.getCode(), ErrorCode.USER_NOT_FOUND.getMessage());
+        }
+
+        boolean dirty = false;
+
+        dirty |= setIfChanged(user::setFirstName, user.getFirstName(), dto.getFirstName());
+        dirty |= setIfChanged(user::setLastName, user.getLastName(), dto.getLastName());
+        dirty |= setIfChanged(user::setPhoneNumber, user.getPhoneNumber(), dto.getPhoneNumber());
+        dirty |= setIfChanged(user::setGender, user.getGender(), dto.getGender());
+
+        // DOB (adjust setter/type if it's LocalDate)
+        if (StringUtils.hasText(dto.getDob())) {
+            dirty |= setIfChanged(user::setDob, user.getDob(), dto.getDob());
+        }
+
+        // Email change → send OTP (do NOT update user.email here)
+        if (StringUtils.hasText(dto.getEmail())) {
+            String targetEmail = dto.getEmail().trim();
+
+            // If email actually changes, validate uniqueness then send OTP
+            if (!Objects.equals(user.getEmail(), targetEmail)) {
+                // 1) Uniqueness guard (case-insensitive)
+                if (userRepository.existsByEmailIgnoreCase(targetEmail)) {
+                    // if that email is already owned by *this* user, it's fine; otherwise block
+                    if (!Objects.equals(user.getEmail(), targetEmail)) {
+                        throw new BusinessException("Email is already in used", "Email is already in use.");
+                    }
+                }
+
+                Instant now = Instant.now();
+
+                // 2) Close any existing OPEN OTPs for this email/purpose
+                var openList = emailVerificationOTPRepository
+                        .findOpenByEmailAndPurpose(targetEmail, EmailVerificationOTP.Purpose.UPDATE_EMAIL);
+                for (EmailVerificationOTP o : openList) {
+                    if (o.getExpiresAt() != null && o.getExpiresAt().isBefore(now)) {
+                        o.setStatus(EmailVerificationOTP.Status.EXPIRED);
+                    } else {
+                        o.setStatus(EmailVerificationOTP.Status.USED);
+                    }
+                }
+                if (!openList.isEmpty()) {
+                    emailVerificationOTPRepository.saveAll(openList);
+                }
+
+                // 3) Create a fresh OTP
+                String code = OTPGenerator.generate6DigitOtp();
+
+                EmailVerificationOTP rec = new EmailVerificationOTP();
+                rec.setEmail(targetEmail);
+                rec.setOtp(code);
+                rec.setPurpose(EmailVerificationOTP.Purpose.UPDATE_EMAIL);
+                rec.setStatus(EmailVerificationOTP.Status.OPEN);
+                rec.setAttempts(0);
+                rec.setCreatedAt(now);
+                rec.setExpiresAt(now.plus(Duration.ofMinutes(5)));
+                emailVerificationOTPRepository.save(rec);
+
+                gmailClient.sendOtpForUpdateEmail(targetEmail, code);
+            }
+        }
+
+        if (dirty) {
+            userRepository.save(user);
+        }
+
+    }
+
+    @Override
+    @Transactional
+    public void verifyUpdateEmail(String username, UserUpdateProfileVerifyRequestDto dto) {
+        User user = userRepository.findByusername(username);
+        if (ObjectUtils.isEmpty(user)) {
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND.getCode(), ErrorCode.USER_NOT_FOUND.getMessage());
+        }
+
+        String emailParam = Optional.ofNullable(dto.getEmail()).map(String::trim).orElse("");
+        String otpParam = Optional.ofNullable(dto.getOtp()).map(String::trim).orElse("");
+
+        if (!StringUtils.hasText(emailParam) || !StringUtils.hasText(otpParam)) {
+            throw new BusinessException(ErrorCode.OTP_INVALID.getCode(), ErrorCode.OTP_INVALID.getMessage());
+        }
+
+        // fetch OPEN OTPs for that email/purpose and match by code
+        var openList = emailVerificationOTPRepository
+                .findOpenByEmailAndPurpose(emailParam, EmailVerificationOTP.Purpose.UPDATE_EMAIL);
+        if (openList.isEmpty()) {
+            throw new BusinessException(ErrorCode.OTP_INVALID.getCode(), ErrorCode.OTP_INVALID.getMessage());
+        }
+
+        // Find the newest record that matches the submitted code
+        Optional<EmailVerificationOTP> matchedOpt = openList.stream()
+                .filter(o -> Objects.equals(o.getOtp(), otpParam))
+                .max(Comparator.comparing(EmailVerificationOTP::getCreatedAt));
+
+        // If code doesn't match any OPEN record → increment attempts on the newest open record and fail
+        if (matchedOpt.isEmpty()) {
+            EmailVerificationOTP newest = openList.stream()
+                    .max(Comparator.comparing(EmailVerificationOTP::getCreatedAt))
+                    .orElse(openList.getFirst()); // safe for Java 8+
+
+            int attempts = Optional.of(newest.getAttempts()).orElse(0) + 1;
+            newest.setAttempts(attempts);
+            // Optional lockout after N bad tries: mark EXPIRED to force a new code
+            if (attempts >= 5) {
+                newest.setStatus(EmailVerificationOTP.Status.EXPIRED);
+            }
+            emailVerificationOTPRepository.save(newest);
+
+            throw new BusinessException(ErrorCode.OTP_INVALID.getCode(), ErrorCode.OTP_INVALID.getMessage());
+        }
+
+        EmailVerificationOTP rec = matchedOpt.get();
+        Instant now = Instant.now();
+
+        if (rec.getExpiresAt() != null && rec.getExpiresAt().isBefore(now)) {
+            rec.setStatus(EmailVerificationOTP.Status.EXPIRED);
+            emailVerificationOTPRepository.save(rec);
+            throw new BusinessException(ErrorCode.OTP_EXPIRED.getCode(), ErrorCode.OTP_EXPIRED.getMessage());
+        }
+
+        // Success → consume the OTP and update email
+        rec.setStatus(EmailVerificationOTP.Status.USED);
+        emailVerificationOTPRepository.save(rec);
+
+        // Guard again for email uniqueness race
+        if (userRepository.existsByEmailIgnoreCase(rec.getEmail())
+                && !Objects.equals(user.getEmail(), rec.getEmail())) {
+            throw new BusinessException("Email is already in use", "Email is already in use.");
+        }
+
+        user.setEmail(rec.getEmail());
+        userRepository.save(user);
+
+        gmailClient.sendConfirmationRegistered(user.getEmail());
+    }
+
+    private boolean setIfChanged(Consumer<String> setter, String current, String incoming) {
+        if (StringUtils.hasText(incoming) && !Objects.equals(current, incoming)) {
+            setter.accept(incoming);
+            return true;
+        }
+        return false;
+    }
 }
+

@@ -105,4 +105,14 @@ public class AdminController {
     }
 
 
+    //TODO
+    @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN','SCOPE_ROLE_SUPERADMIN')")
+    @PostMapping("/update")
+    public ResponseMessageBuilder.ResponseMessage<Void> updateAdmins(@Valid @RequestBody AdminUpdateRequestVo request) {
+        AdminUpdateRequestDto requestDto = userMapper.toAdminUpdateRequestDto(request);
+        authService.updateAdmin(requestDto);
+        return new ResponseMessageBuilder<Void>().success().build();
+    }
+
+
 }

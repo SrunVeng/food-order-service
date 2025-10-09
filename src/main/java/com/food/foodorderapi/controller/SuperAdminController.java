@@ -33,6 +33,7 @@ public class SuperAdminController {
 
 
 
+    @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_SUPERADMIN')")
     @PostMapping("/create/user/admin")
     public ResponseMessageBuilder.ResponseMessage<Void> createAdmins(@Valid @RequestBody AdminCreateRequestVo request) {
         AdminCreateRequestDto requestDto = userMapper.toAdminCreateRequestDto(request);

@@ -323,6 +323,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public void deleteAdmin(AdminDeleteRequestDto requestDto) {
         User user = userRepository.findByUsername(requestDto.getUsername())
                 .orElseThrow(() -> new BusinessException(
@@ -342,7 +343,7 @@ public class AuthServiceImpl implements AuthService {
             // adjust error as you like
             throw new BusinessException("403", "Not allowed to delete this user");
         }
-
+        adminInviteTokenRepository.deleteAllByUserId(user.getId());
         userRepository.delete(user);     // <-- lets JPA clean join table properly
         userRepository.flush();          // optional: execute SQL immediately
         gmailClient.sendRemoveConfirmationtoUser(user.getEmail());

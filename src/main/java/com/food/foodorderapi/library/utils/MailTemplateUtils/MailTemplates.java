@@ -536,9 +536,9 @@ public final class MailTemplates {
                         <tr>
                           <td>
                             <h1 class="heading">You’ve been invited as an admin</h1>
+                            <h2 class="heading"> Username:%2$s</h2>
                             <p class="body">
-                              we had invite you to be an administrator on <strong>%1$s</strong>.
-                               %2$s is your username
+                              we had invite you to be an administrator on <strong>%1$s</strong>.                   \s
                               To activate your access, please set your password:
                             </p>
                           </td>
@@ -596,7 +596,7 @@ public final class MailTemplates {
           </table>
         </body>
         </html>
-        """.formatted(
+       \s""".formatted(
                 safe(appName),
                 safe(invitedBy),
                 safe(setPasswordUrl),

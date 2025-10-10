@@ -27,6 +27,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.food.foodorderapi.client.Gmail.GmailClient;
 import com.food.foodorderapi.dto.request.*;
@@ -43,7 +44,6 @@ import com.food.foodorderapi.library.utils.NumberGenerator.TokenGenerator;
 import com.food.foodorderapi.mapper.UserMapper;
 import com.food.foodorderapi.repository.*;
 import com.food.foodorderapi.service.AuthService;
-import org.springframework.util.StringUtils;
 
 
 @Service
@@ -299,6 +299,7 @@ public class AuthServiceImpl implements AuthService {
         user.setLastName(requestDto.getLastName());
         user.setUsername(requestDto.getUsername());
         user.setEmail(requestDto.getEmail());
+        user.setGender(requestDto.getGender());
         user.setPhoneNumber(requestDto.getPhoneNumber());
         user.setPassword(null);
         user.setChatId(null);
@@ -312,17 +313,39 @@ public class AuthServiceImpl implements AuthService {
         user.setIsCredentialsNonExpired(true);
         user.setIsDeleted(false);
         userRepository.save(user);
-        gmailClient.sendAdminInvite(user.getEmail(), user.getUsername());
+        String token = TokenGenerator.generateToken();
+        AdminInviteToken tokenset = new AdminInviteToken();
+        tokenset.setToken(token);
+        tokenset.setUser(user);
+        tokenset.setStatus(AdminInviteToken.Status.OPEN);
+        adminInviteTokenRepository.save(tokenset);
+        gmailClient.sendAdminInvite(user.getEmail(), user.getUsername(), token);
     }
 
     @Override
     public void deleteAdmin(AdminDeleteRequestDto requestDto) {
-        User byUserNo = userRepository.findByusername(requestDto.getUsername());
-        if (ObjectUtils.isEmpty(byUserNo)) {
-            throw new BusinessException(ErrorCode.USER_NOT_FOUND.getCode(), ErrorCode.USER_NOT_FOUND.getMessage());
+        User user = userRepository.findByUsername(requestDto.getUsername())
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.USER_NOT_FOUND.getCode(),
+                        ErrorCode.USER_NOT_FOUND.getMessage()
+                ));
+
+        var normalized = user.getRoles().stream()
+                .map(Role::getName)
+                .map(s -> s == null ? "" : s.toUpperCase().replaceFirst("^ROLE_", ""))
+                .toList();
+
+        boolean isAdmin = normalized.contains("ADMIN");
+        boolean isSuperAdmin = normalized.contains("SUPERADMIN");
+
+        if (!isAdmin || isSuperAdmin) {
+            // adjust error as you like
+            throw new BusinessException("403", "Not allowed to delete this user");
         }
-        userRepository.deleteAdminByUserNo(byUserNo.getUserNo());
-        gmailClient.sendRemoveConfirmationtoUser(byUserNo.getEmail());
+
+        userRepository.delete(user);     // <-- lets JPA clean join table properly
+        userRepository.flush();          // optional: execute SQL immediately
+        gmailClient.sendRemoveConfirmationtoUser(user.getEmail());
     }
 
     @Override
@@ -346,6 +369,7 @@ public class AuthServiceImpl implements AuthService {
         user.setIsVerified(true);
         userRepository.save(user);
         byToken.setStatus(AdminInviteToken.Status.USED);
+        adminInviteTokenRepository.save(byToken);
     }
 
     @Override
@@ -520,4 +544,3 @@ public class AuthServiceImpl implements AuthService {
         return false;
     }
 }
-

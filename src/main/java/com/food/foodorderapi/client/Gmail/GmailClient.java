@@ -146,9 +146,9 @@ public class GmailClient {
             throw new RuntimeException("Failed to send reset email", e);
         }
     }
-    public void sendAdminInvite(String toEmail, String invitedByDisplayName) {
+    public void sendAdminInvite(String toEmail, String invitedByDisplayName , String token ) {
 
-        String token = TokenGenerator.generateToken();
+
         if (!StringUtils.hasText(toEmail) || !EmailValidator.getInstance().isValid(toEmail)) {
             log.warn("Not sending admin invite: invalid recipient '{}'", toEmail);
             return;

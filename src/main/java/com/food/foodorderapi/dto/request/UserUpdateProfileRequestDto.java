@@ -1,7 +1,6 @@
 package com.food.foodorderapi.dto.request;
 
 
-import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data

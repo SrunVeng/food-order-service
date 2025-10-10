@@ -1,9 +1,5 @@
 package com.food.foodorderapi.controller;
 
-import com.food.foodorderapi.dto.request.UserUpdateProfileRequestDto;
-import com.food.foodorderapi.dto.request.UserUpdateProfileVerifyRequestDto;
-import com.food.foodorderapi.vo.request.UserUpdateProfileRequestVo;
-import com.food.foodorderapi.vo.request.UserUpdateProfileVerifyRequestVo;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -12,10 +8,14 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import com.food.foodorderapi.dto.request.UserUpdateProfileRequestDto;
+import com.food.foodorderapi.dto.request.UserUpdateProfileVerifyRequestDto;
 import com.food.foodorderapi.dto.response.UserProfileResultDto;
 import com.food.foodorderapi.library.messagebuilder.ResponseMessageBuilder;
 import com.food.foodorderapi.mapper.UserMapper;
 import com.food.foodorderapi.service.AuthService;
+import com.food.foodorderapi.vo.request.UserUpdateProfileRequestVo;
+import com.food.foodorderapi.vo.request.UserUpdateProfileVerifyRequestVo;
 import com.food.foodorderapi.vo.response.UserProfileResponseVo;
 
 @RestController

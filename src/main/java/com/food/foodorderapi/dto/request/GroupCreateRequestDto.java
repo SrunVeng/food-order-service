@@ -2,10 +2,11 @@ package com.food.foodorderapi.dto.request;
 
 
 
-import com.food.foodorderapi.vo.request.GroupCreateRequestVo;
 import lombok.Data;
 
 import java.time.Instant;
+
+import com.food.foodorderapi.vo.request.GroupCreateRequestVo;
 
 
 @Data

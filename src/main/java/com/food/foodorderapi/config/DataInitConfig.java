@@ -1,8 +1,6 @@
 package com.food.foodorderapi.config;
 
 
-import com.food.foodorderapi.entity.User;
-import com.food.foodorderapi.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
@@ -13,7 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.food.foodorderapi.entity.Role;
+import com.food.foodorderapi.entity.User;
 import com.food.foodorderapi.repository.RoleRepository;
+import com.food.foodorderapi.repository.UserRepository;
 
 @Component
 @RequiredArgsConstructor

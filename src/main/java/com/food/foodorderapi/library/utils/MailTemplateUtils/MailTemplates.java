@@ -537,7 +537,8 @@ public final class MailTemplates {
                           <td>
                             <h1 class="heading">You’ve been invited as an admin</h1>
                             <p class="body">
-                              %2$s has invited you to be an administrator on <strong>%1$s</strong>.
+                              we had invite you to be an administrator on <strong>%1$s</strong>.
+                               %2$s is your username
                               To activate your access, please set your password:
                             </p>
                           </td>

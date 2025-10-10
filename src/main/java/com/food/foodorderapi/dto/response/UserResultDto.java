@@ -11,6 +11,7 @@ public class UserResultDto {
 
     private String userNo;
     private String username;
+    private String gender;
     private String firstName;
     private String lastName;
     private String email;

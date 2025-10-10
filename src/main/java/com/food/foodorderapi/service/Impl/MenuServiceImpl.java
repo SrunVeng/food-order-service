@@ -69,7 +69,6 @@ public class MenuServiceImpl implements MenuService {
                         ErrorCode.MENU_NOT_FOUND.getCode(),
                         ErrorCode.MENU_NOT_FOUND.getMessage()
                 ));
-
         menu.setName(requestDto.getName());
         menu.setDescription(requestDto.getDescription());
         menu.setBasePrice(requestDto.getBasePrice());

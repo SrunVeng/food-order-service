@@ -4,7 +4,6 @@ package com.food.foodorderapi.repository;
 
 import jakarta.transaction.Transactional;
 
-import org.springframework.boot.autoconfigure.batch.BatchTransactionManager;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

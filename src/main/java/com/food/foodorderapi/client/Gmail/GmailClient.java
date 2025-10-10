@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.food.foodorderapi.library.utils.MailTemplateUtils.MailTemplates;
-import com.food.foodorderapi.library.utils.NumberGenerator.TokenGenerator;
 
 @Component
 @RequiredArgsConstructor

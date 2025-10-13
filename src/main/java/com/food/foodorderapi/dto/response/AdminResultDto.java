@@ -13,7 +13,7 @@ import com.food.foodorderapi.entity.Role;
 @Data
 public class AdminResultDto {
 
-    private String userNo;
+    private Long id;
     private String username;
     private String firstName;
     private String gender;

@@ -77,7 +77,7 @@ public class AdminController {
     }
 
     @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN','SCOPE_ROLE_SUPERADMIN')")
-    @DeleteMapping("/update/menus")
+    @PutMapping("/update/menus")
     public ResponseMessageBuilder.ResponseMessage<Void> updateMenus(@Valid @RequestBody MenuUpdateRequestVo request) {
         MenuUpdateRequestDto requestDto = menuMapper.toMenuUpdateRequestDto(request);
         menuService.updateMenu(requestDto);
@@ -107,7 +107,7 @@ public class AdminController {
 
     //TODO
     @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN','SCOPE_ROLE_SUPERADMIN')")
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseMessageBuilder.ResponseMessage<Void> updateAdmins(@Valid @RequestBody AdminUpdateRequestVo request) {
         AdminUpdateRequestDto requestDto = userMapper.toAdminUpdateRequestDto(request);
         authService.updateAdmin(requestDto);

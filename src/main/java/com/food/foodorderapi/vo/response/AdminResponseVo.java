@@ -11,7 +11,7 @@ import com.food.foodorderapi.entity.Role;
 @Data
 public class AdminResponseVo {
 
-    private String userNo;
+    private Long Id;
     private String username;
     private String gender;
     private String firstName;

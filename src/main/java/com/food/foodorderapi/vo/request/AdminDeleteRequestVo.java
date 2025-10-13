@@ -2,11 +2,12 @@ package com.food.foodorderapi.vo.request;
 
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class AdminDeleteRequestVo {
 
-    @NotBlank(message = "username cannot be blank")
-    private String username;
+    @NotNull(message = "id is required")
+    private Long id;
 }

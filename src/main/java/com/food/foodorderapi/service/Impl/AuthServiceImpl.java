@@ -294,6 +294,9 @@ public class AuthServiceImpl implements AuthService {
         if(!ObjectUtils.isEmpty(byusername)){
             throw new BusinessException(ErrorCode.USER_NAME_ALREADY_EXIST.getCode(), ErrorCode.USER_NAME_ALREADY_EXIST.getMessage());
         }
+        if(userRepository.existsByEmailIgnoreCase(requestDto.getEmail())){
+            throw new BusinessException(ErrorCode.EMAIL_ALREADY_EXIST.getCode(), ErrorCode.EMAIL_ALREADY_EXIST.getMessage());
+        }
         User user = new User();
         user.setFirstName(requestDto.getFirstName());
         user.setLastName(requestDto.getLastName());
@@ -325,7 +328,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void deleteAdmin(AdminDeleteRequestDto requestDto) {
-        User user = userRepository.findByUsername(requestDto.getUsername())
+        User user = userRepository.findById(requestDto.getId())
                 .orElseThrow(() -> new BusinessException(
                         ErrorCode.USER_NOT_FOUND.getCode(),
                         ErrorCode.USER_NOT_FOUND.getMessage()
@@ -375,7 +378,53 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void updateAdmin(AdminUpdateRequestDto requestDto) {
+        // 1) Load the target user by ID (stable identifier)
+        User user = userRepository.findById(requestDto.getId())
+                .orElseThrow(() -> new BusinessException("404", "User not found"));
 
+        // 2) Must be ADMIN
+        boolean isAdmin = user.getRoles() != null &&
+                user.getRoles().stream().anyMatch(r -> "ADMIN".equalsIgnoreCase(r.getName()));
+        if (!isAdmin) {
+            throw new BusinessException("403", "User is not Admin");
+        }
+
+        // 3) Username: only validate when changed; ensure not owned by another user
+        String newUsername = trimOrNull(requestDto.getUsername());
+        if (newUsername != null && !newUsername.equalsIgnoreCase(user.getUsername())) {
+            if (userRepository.existsByUsernameIgnoreCaseAndIdNot(newUsername, user.getId())) {
+                throw new BusinessException(
+                        ErrorCode.USER_NAME_ALREADY_EXIST.getCode(),
+                        ErrorCode.USER_NAME_ALREADY_EXIST.getMessage()
+                );
+            }
+            user.setUsername(newUsername);
+        }
+
+
+        // 4) Email: only validate when changed; ensure not owned by another user
+        String newEmail = trimOrNull(requestDto.getEmail());
+        if (newEmail != null && !newEmail.equalsIgnoreCase(user.getEmail())) {
+            if (userRepository.existsByEmailIgnoreCaseAndIdNot(newEmail, user.getId())) {
+                throw new BusinessException(
+                        ErrorCode.EMAIL_ALREADY_EXIST.getCode(),
+                        ErrorCode.EMAIL_ALREADY_EXIST.getMessage()
+                );
+            }
+            user.setEmail(newEmail);
+        }
+
+        // 5) Other fields (no uniqueness)
+        user.setFirstName(requestDto.getFirstName());
+        user.setLastName(requestDto.getLastName());
+        user.setGender(requestDto.getGender());
+        user.setPhoneNumber(requestDto.getPhoneNumber());
+
+        userRepository.save(user);
+    }
+
+    private static String trimOrNull(String s) {
+        return s == null ? null : s.trim();
     }
 
     @Override

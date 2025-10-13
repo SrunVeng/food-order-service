@@ -49,7 +49,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public void delete(MenuDeleteRequestDto requestDto) {
-        Optional<Menu> byId = menuRepository.findById(requestDto.getMenuId());
+        Optional<Menu> byId = menuRepository.findById(requestDto.getId());
         if(ObjectUtils.isEmpty(byId)){
             throw new BusinessException(ErrorCode.MENU_NOT_FOUND.getCode(), ErrorCode.MENU_NOT_FOUND.getMessage());
         }

@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class MenuDeleteRequestDto {
 
-    private Long menuId;
+    private Long id;
 }

@@ -10,10 +10,8 @@ import java.util.List;
 @Data
 public class RestaurantMenuDeleteRequestDto {
 
-    @NotBlank(message = "restaurant id cannot be blank")
-    private Long restaurantId;
 
-    @NotNull(message = "List of menuIds cannot be blank")
-    private List<Long> menuIds;
+    private Long restaurantId;
+    private Long menuId;
 
 }

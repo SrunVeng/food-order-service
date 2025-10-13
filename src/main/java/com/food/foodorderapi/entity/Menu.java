@@ -1,10 +1,12 @@
 package com.food.foodorderapi.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,12 +30,19 @@ public class Menu {
     private Instant createdAt;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(
             name = "restaurants_menus",
             joinColumns = @JoinColumn(name = "menu_id"),
             inverseJoinColumns = @JoinColumn(name = "restaurant_id")
     )
-    private List<Restaurant> restaurants;
+    private List<Restaurant> restaurants = new ArrayList<>();
+
+
+    @PrePersist
+    void prePersist() {
+        if (createdAt == null) createdAt = Instant.now();
+    }
 
 
 }

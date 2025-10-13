@@ -31,4 +31,25 @@ public class Restaurant {
     @ManyToMany(mappedBy = "restaurants")
     private List<Menu> menus;
 
+    @PrePersist
+    void prePersist() {
+        if (createdAt == null) createdAt = Instant.now();
+    }
+
+    public void addMenu(Menu m) {
+        if (m == null) return;
+        if (!menus.contains(m)) {
+            menus.add(m);
+        }
+        if (!m.getRestaurants().contains(this)) {
+            m.getRestaurants().add(this);
+        }
+    }
+
+    public void removeMenu(Menu m) {
+        if (m == null) return;
+        menus.remove(m);
+        m.getRestaurants().remove(this);
+    }
+
 }

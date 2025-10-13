@@ -1,5 +1,6 @@
 package com.food.foodorderapi.service.Impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.food.foodorderapi.dto.request.*;
+import com.food.foodorderapi.dto.response.MenuResultDto;
 import com.food.foodorderapi.dto.response.RestaurantCreateResultDto;
 import com.food.foodorderapi.dto.response.RestaurantResultDto;
 import com.food.foodorderapi.entity.Menu;
@@ -56,8 +58,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public void delete(RestaurantDeleteRequestDto requestDto) {
         Optional<Restaurant> byId = restaurantRepository.findById(requestDto.getRestaurantId());
-        if(ObjectUtils.isEmpty(byId)) {
-            throw new BusinessException(ErrorCode.RESTAURANT_NOT_FOUND.getCode(),ErrorCode.RESTAURANT_NOT_FOUND.getMessage());
+        if (ObjectUtils.isEmpty(byId)) {
+            throw new BusinessException(ErrorCode.RESTAURANT_NOT_FOUND.getCode(), ErrorCode.RESTAURANT_NOT_FOUND.getMessage());
         }
         Restaurant restaurant = byId.get();
         restaurantRepository.delete(restaurant);
@@ -70,13 +72,26 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public void updatemenu(RestaurantMenuUpdateRequestDto requestDto) {
-        Optional<Restaurant> byId = restaurantRepository.findById(requestDto.getRestaurantId());
-        if(ObjectUtils.isEmpty(byId)) {
-            throw new BusinessException(ErrorCode.RESTAURANT_NOT_FOUND.getCode(),ErrorCode.RESTAURANT_NOT_FOUND.getMessage());
+        Restaurant restaurant = restaurantRepository.findByIdWithMenus(requestDto.getRestaurantId())
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.RESTAURANT_NOT_FOUND.getCode(),
+                        ErrorCode.RESTAURANT_NOT_FOUND.getMessage()
+                ));
+        Menu menu;
+        if (requestDto.getMenuId() == null) {
+            menu = new Menu();
+            menu.setName(requestDto.getName());
+            menu.setDescription(requestDto.getDescription());
+            menu.setBasePrice(requestDto.getBasePrice());
+            menu = menuRepository.save(menu);
+            restaurant.addMenu(menu);
+            restaurantRepository.save(restaurant);
+        } else {
+            Optional<Menu> byId = menuRepository.findById(requestDto.getMenuId());
+            Menu menu1 = byId.get();
+            restaurant.addMenu(menu1);
+            restaurantRepository.save(restaurant);
         }
-        Restaurant restaurant = byId.get();
-        List<Menu> allById = menuRepository.findAllById(requestDto.getMenuIds());
-        restaurant.setMenus(allById);
     }
 
     @Override
@@ -86,14 +101,21 @@ public class RestaurantServiceImpl implements RestaurantService {
                         ErrorCode.RESTAURANT_NOT_FOUND.getCode(),
                         ErrorCode.RESTAURANT_NOT_FOUND.getMessage()
                 ));
-
-        Set<Long> idsToRemove = new HashSet<>(requestDto.getMenuIds());
-        // relies on Menu#getId and equals/hashCode by id
-        restaurant.getMenus().removeIf(m -> idsToRemove.contains(m.getId()));
-
-        // If Restaurant is the owning side, this save is enough.
+        Menu menu = menuRepository.findById(requestDto.getMenuId())
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.MENU_NOT_FOUND.getCode(),
+                        ErrorCode.MENU_NOT_FOUND.getMessage()
+                ));
+        if (!restaurant.getMenus().contains(menu)) {
+            throw new BusinessException(
+                    ErrorCode.MENU_NOT_FOUND.getCode(),
+                    "Menu is not attached to the restaurant"
+            );
+        }
+        restaurant.removeMenu(menu);
         restaurantRepository.save(restaurant);
     }
+
 
     @Override
     public void updateRestaurant(RestaurantUpdateRequestDto requestDto) {
@@ -110,4 +132,25 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setOwnerName(requestDto.getOwnerName());
         restaurantRepository.save(restaurant);
     }
+
+    @Override
+    @Transactional
+    public List<MenuResultDto> getMenusOfRestaurant(Long id) {
+        Restaurant restaurant = restaurantRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.RESTAURANT_NOT_FOUND.getCode(),
+                        ErrorCode.RESTAURANT_NOT_FOUND.getMessage()));
+
+        return restaurant.getMenus().stream()
+                .map(m -> {
+                    MenuResultDto dto = new MenuResultDto();
+                    dto.setId(m.getId());
+                    dto.setName(m.getName());
+                    dto.setDescription(m.getDescription());
+                    dto.setBasePrice(m.getBasePrice());
+                    return dto;
+                })
+                .toList();
+    }
+
 }

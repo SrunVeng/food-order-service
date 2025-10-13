@@ -4,6 +4,8 @@ package com.food.foodorderapi.mapper;
 
 
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
@@ -37,4 +39,6 @@ public interface MenuMapper {
     MenuResultDto toMenuResultDto(Menu menu);
 
     MenuUpdateRequestDto toMenuUpdateRequestDto(MenuUpdateRequestVo request);
+
+    List<MenuResponseVo> toMenuResponseVoList(List<MenuResultDto> menus);
 }
